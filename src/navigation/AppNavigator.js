@@ -7,6 +7,7 @@ import {Colors} from '../constants/Colors';
 import WelcomPage from '../pages/WelcomPage';
 import {StatusBar} from 'react-native';
 import IntroductionPage from '../pages/IntroductionPage';
+import LoginPage from '../pages/LoginPage';
 // import {
 //   AnimationType,
 //   getAnimatingBottomBar,
@@ -14,7 +15,7 @@ import IntroductionPage from '../pages/IntroductionPage';
 const navOptionsHandler = navigation => ({
   headerShown: false,
 });
-StatusBar.setBackgroundColor(Colors.statusBarColor);
+StatusBar.setBackgroundColor(Colors.welcomeColor1);
 StatusBar.setBarStyle(Colors.light);
 
 const welcomStack = createStackNavigator({
@@ -26,11 +27,20 @@ const welcomStack = createStackNavigator({
     screen: IntroductionPage,
     navigationOptions: navOptionsHandler,
   },
+  
+});
+const authStack = createStackNavigator({
+  Login: {
+    screen: LoginPage,
+    navigationOptions: navOptionsHandler,
+  },
+  
 });
 
 const appNavigator = createAnimatedSwitchNavigator(
   {
     Welcome: welcomStack,
+    Auth: authStack,
   },
   {
     initialRouteName: 'Welcome',

@@ -23,7 +23,7 @@
  
  export const queryClient = new QueryClient();
  const App = () => {
-   StatusBar.setBackgroundColor(Colors.statusBarColor);
+   StatusBar.setBackgroundColor(Colors.welcomeColor1);
    StatusBar.setBarStyle(Colors.light);
  
    return (
