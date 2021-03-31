@@ -16,7 +16,7 @@ export default function WelcomPage(props) {
     setTimeout(() => props.navigation.navigate('Introduction'), 2000);
   }, []);
   return (
-    <ImageBackground style={styles.background} source={Images.background}>
+    <ImageBackground style={styles.background} source={Images.welcomeBackground}>
       <Animatable.Image
         style={styles.logo}
         animation="bounceIn"
@@ -66,6 +66,6 @@ const styles = StyleSheet.create({
   },
   backgroundLogo: {
     width: width * 1.2,
-    height: height * 0.5,
+    height: height * 0.55,
   }
 });

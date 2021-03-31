@@ -1,46 +1,41 @@
 import React from 'react';
-import {ActivityIndicator} from 'react-native';
-import {Dimensions, StyleSheet, Text, TouchableOpacity} from 'react-native';
-import {scale} from 'react-native-size-matters';
-import {Colors} from '../constants/Colors';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Colors } from '../constants/Colors';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { scale } from 'react-native-size-matters';
 
-const MainButton = props => {
+export default function Input(props) {
+
   return (
-    <TouchableOpacity
-      style={[styles.button, props.style]}
-      activeOpacity={0.8}
-      onPress={props.onPress}
-      {...props}>
-      {props.isLoading ? (
-        <ActivityIndicator size="large" color="white" />
-      ) : (
-        <Text style={[styles.text, props.styleText]}>{props.title}</Text>
-      )}
-    </TouchableOpacity>
-  );
-};
-const styles = StyleSheet.create({
-  button: {
-    //width: scale(220),
-    backgroundColor: Colors.backgroundSplashBlue,
-    alignItems: 'center',
-    paddingVertical: Dimensions.get('window').height * 0.02,
-    paddingHorizontal: Dimensions.get('window').width * 0.25,
-    borderRadius: scale(25),
-  },
-  text: {
-    color: Colors.light,
-    fontSize: 18,
-    fontFamily: 'OpenSans-Bold',
-  },
-  buttonDisabled: {
-    width: scale(300),
-    backgroundColor: Colors.grey1,
-    alignItems: 'center',
-    padding: Dimensions.get('window').height * 0.02,
-    borderRadius: 15,
-    //marginVertical:16
-  },
-});
 
-export default MainButton;
+    <View style={[styles.container, props.style]}>
+      <TouchableOpacity style={styles.button}
+        onPress={props.onPress} >
+
+        {props.isLoading ? (
+          <ActivityIndicator size="large" color="white" />
+        ) : (
+          <Text style={[styles.text, props.styleText]}>{props.title}</Text>
+        )}
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create(
+  {
+    container: {
+      borderRadius: scale(15), borderColor: 'rgba(29, 219, 79,0.09)', borderWidth: 5,
+    },
+    button: {
+      width: scale(240), height: scale(40), backgroundColor: 'rgba(255, 255, 255,0.02)',
+      borderColor: Colors.logoGreen, borderWidth: 1, borderRadius: scale(10),
+      flexDirection: "row", alignItems: 'center', paddingHorizontal: scale(10), justifyContent: 'center'
+    },
+    text: {
+      color: 'white',
+      fontSize: scale(15)
+    }
+  }
+)
+

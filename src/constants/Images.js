@@ -1,7 +1,12 @@
 export const Images = {
     background: require('../assets/images/backgroundColor.jpg'),
+    welcomeBackground : require('../assets/background/welcomebackground.jpg'),
+    introductionBackground: require('../assets/background/introductionbackground.jpg'),
+    loginBackground: require('../assets/background/loginbackground.jpg'),
+    map1: require('../assets/background/map1.jpg'),
+    map2: require('../assets/background/map2.jpg'),
     logo: require('../assets/images/Logo.png'),
-    logoTransparent: require('../assets/images/logoTransparent.png'),
+    logoTransparent: require('../assets/background/tLogo.png'),
     backgroundShape: require('../assets/images/backgroundShape.png'),
     map: require('../assets/images/Map.png'),
     user1: require('../assets/images/user1.png'),
@@ -12,5 +17,7 @@ export const Images = {
     upload: require('../assets/images/upload.png'),
     locationBlue: require('../assets/images/locationBlue.png'),
     locationWhite: require('../assets/images/locationWhite.png'),
+    googleLogo: require('../assets/background/googleLogo.png'),
+    facebookLogo: require('../assets/background/facebookLogo.png')
   };
   
