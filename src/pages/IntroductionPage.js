@@ -1,91 +1,63 @@
 import React from 'react';
-import {View, Image, StyleSheet, Dimensions} from 'react-native';
-import {scale} from 'react-native-size-matters';
+import { ImageBackground, Image, StyleSheet, Dimensions, View } from 'react-native';
+import { scale } from 'react-native-size-matters';
 import Box from '../components/Box';
 import Styles from '../constants/Styles';
 import * as Animatable from 'react-native-animatable';
 import Text from '../components/Text';
+import { Images } from '../constants/Images';
+import LinearGradient from 'react-native-linear-gradient';
+import { Colors } from '../constants/Colors';
+import TextButton from '../components/TextButton';
+import Swiper from 'react-native-swiper'
+import Logo from '../components/Logo';
 
 export default function IntroductionPage(props) {
- 
+
   return (
-    <Box flex={1} backgroundColor="backgroundSplashBlue" style={styles.header}>
-      {/* <Animatable.Image
-        animation="bounceIn"
-        duration={500}
-        source={Images.backgroundSplash}
-        style={styles.logo}
-        resizeMode="stretch"
-      /> */}
-      <Animatable.View style={styles.footer} animation="fadeInUpBig">
-        <Box
-          paddingHorizontal="l"
-          style={{...Styles.Common.ColumnCenter}}
-          marginTop="l">
-          <Text>hi there</Text>
-        </Box>
-      </Animatable.View>
+    <Box flex={1}>
+      <LinearGradient colors={[Colors.backgroundColor1, Colors.welcomeColor2]} style={styles.background}>
+        <Logo/>
+        <Swiper  autoplay autoplayTimeout={4} activeDotColor='white' activeDotStyle={{color: 'white' ,width: scale(20) }}>
+          <View style={{ alignItems: 'center' }}>
+            <Image resizeMode='stretch' source={Images.map} style={styles.map} />
+            <View style={{ alignItems: 'center', width: width * 0.6, marginTop:scale(10) }}>
+              <Text style={{ fontSize: scale(25), color: Colors.white }}>Events</Text>
+              <Text style={{ textAlign: 'center', fontSize: scale(15), color: Colors.white }}>Lorem Ipsum is simply dummy text of the printing and typesetting industry</Text>
+            </View>
+          </View>
+          <View style={{ alignItems: 'center' }}>
+            <Image resizeMode='stretch' source={Images.map} style={styles.map} />
+            <View style={{ width: width * 0.6, alignItems:'center', marginTop:scale(10) }}>
+              <Text style={{ fontSize: scale(25), color: Colors.white }}>Events</Text>
+              <Text style={{textAlign: 'center',fontSize: scale(15), color: Colors.white }}>Lorem Ipsum is simply dummy text of the printing and typesetting industry</Text>
+            </View>
+          </View>
+        </Swiper>
+
+        <TextButton onPress={()=>{props.navigation.navigate('Auth')}} style={{ marginBottom: scale(10) }} fontSize={scale(18)} title='Skip >' color={Colors.white} />
+
+
+      </LinearGradient>
     </Box>
   );
 }
-const {height, width} = Dimensions.get('screen');
-const height_logo = height * 0.22;
-const width_logo = width * 0.3;
+const { height, width } = Dimensions.get('screen');
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
-    backgroundColor: '#009387',
+    alignItems: "center"
   },
-  header: {
-    flex: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  footer: {
-    flex: 1,
-    marginHorizontal: scale(20),
-    marginTop: scale(20),
-    backgroundColor: '#fff',
-    borderTopLeftRadius: scale(30),
-    borderTopRightRadius: scale(30),
-    elevation: scale(5),
-    width: scale(300),
-    height: scale(10)
-    // paddingVertical: 50,
-    // paddingHorizontal: 30,
+  map: {
+    width: width * 1.5,
+    height: height * 0.35,
+    // marginEnd: scale(95),
+    marginTop: scale(20)
   },
   logo: {
-    width: width_logo,
-    height: height_logo,
-    marginTop: scale(100),
-    marginBottom: scale(100),
-  },
-  title: {
-    color: '#05375a',
-    fontSize: 30,
-    fontWeight: 'bold',
-  },
-  text: {
-    color: 'grey',
-    marginTop: 5,
-  },
-  // singnInbutton: {
-  //   width: scale(300),
-  //   backgroundColor: Colors.backgroundSplashBlue,
-  //   alignItems: 'center',
-  //   padding: Dimensions.get('window').height * 0.02,
-  //   borderRadius: 15,
-  // },
-  signIn: {
-    width: 150,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 50,
-    flexDirection: 'row',
-  },
-  textSign: {
-    color: 'white',
-    fontWeight: 'bold',
+    height: height * 0.12,
+    width: width * 0.3,
+    marginTop: scale(30),
+
   },
 });
