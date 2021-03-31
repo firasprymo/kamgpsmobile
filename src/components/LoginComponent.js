@@ -27,7 +27,7 @@ export default function LoginComponent(props) {
       console.log()
     }
   }
-
+//
   return (
     <View style={styles.container}>
       <Logo />
