@@ -9,7 +9,7 @@ export default function Input(props) {
   return (
 
     <View style={[styles.container, props.style]}>
-      <TouchableOpacity style={styles.button}
+      <TouchableOpacity style={[styles.button,{borderColor: props.glowColor}]}
         onPress={props.onPress} >
 
         {props.isLoading ? (
@@ -28,8 +28,8 @@ const styles = StyleSheet.create(
       borderRadius: scale(15), borderColor: 'rgba(29, 219, 79,0.09)', borderWidth: 5,
     },
     button: {
-      width: scale(240), height: scale(40), backgroundColor: 'rgba(255, 255, 255,0.02)',
-      borderColor: Colors.logoGreen, borderWidth: 1, borderRadius: scale(10),
+      width: scale(240), height: scale(35), backgroundColor: 'rgba(255, 255, 255,0.02)',
+       borderWidth: 1, borderRadius: scale(7),
       flexDirection: "row", alignItems: 'center', paddingHorizontal: scale(10), justifyContent: 'center'
     },
     text: {

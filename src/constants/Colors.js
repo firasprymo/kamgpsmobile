@@ -9,6 +9,7 @@ export const Colors = {
   green1: '#b7e7cc',
   light: '#e9f7ef',
   buttonColor: '#4dc1e1',
-  white: '#fff'
+  white: '#fff',
+  red: 'crimson'
 
 };

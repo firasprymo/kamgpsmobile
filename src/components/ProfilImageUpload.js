@@ -1,8 +1,10 @@
 import React from 'react';
-import {Dimensions, Image, Platform, StyleSheet, View} from 'react-native';
+import {Dimensions, Image, Platform, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Colors} from '../constants/Colors';
 import {scale} from 'react-native-size-matters';
 import IconButton from './IconButton';
+import { Images } from '../constants/Images';
+import  Icon  from 'react-native-vector-icons/FontAwesome';
 
 const ProfilImageUpload = props => {
   const source = props?.source ? {uri: props?.source?.uri} : props?.default;
@@ -14,11 +16,11 @@ const ProfilImageUpload = props => {
           height: scale(100),
           width: scale(100),
         }}
-        source={source}
+        source={props.source}
       />
-      <View style={styles.uploadIcon}>
-        <IconButton style={styles.icon} name="md-arrow-up" />
-      </View>
+      <TouchableOpacity onPress={props.onPress} style={styles.uploadIcon}>
+        <Icon style={styles.icon} name='arrow-circle-up' size={25} color={Colors.welcomeColor1} />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -28,10 +30,11 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').height * 0.15,
     width: Dimensions.get('window').height * 0.15,
     borderRadius: (Dimensions.get('window').height * 0.15) / 2,
-    backgroundColor: 'grey',
-    opacity: 0.6,
+    backgroundColor: 'rgba(189, 184, 224,0.3)',
     alignItems: 'center',
     justifyContent: 'center',
+    borderColor: 'rgba(0,0,0,0.2)',
+    borderWidth: 3
   },
   uploadIcon: {
     position: 'absolute',
@@ -43,18 +46,15 @@ const styles = StyleSheet.create({
       ios: 6,
       android: 0,
     }),
-    borderWidth: 2,
-    height: 25,
-    width: 25,
-    borderRadius: 25 / 2,
+    height: 30,
+    width: 30,
+    borderRadius: 30 / 2,
     alignItems: 'center',
     justifyContent: 'center',
-    borderColor: Colors.light,
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.white,
   },
   icon: {
-    color: Colors.light,
-    fontSize: 16,
+    color: Colors.welcomeColor3,
   },
 });
 
