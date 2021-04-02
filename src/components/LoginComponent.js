@@ -52,11 +52,11 @@ export default function LoginComponent(props) {
         onChangeText={setPhoneNumber}
         style={{ marginTop: scale(100)}} errorMessage={phoneErrorMessage} />
       <MainButton glowColor={Colors.logoGreen} onPress={ () => handelLoginBtn(phoneNumber) } title="LOGIN" style={{ marginTop: scale(20) }} />
-      <Text style={styles.text}>Ou s'identifier avec</Text>
+      {/* <Text style={styles.text}>Ou s'identifier avec</Text>
       <View style={{ flexDirection: 'row', marginTop: scale(40), marginBottom: scale(40) }}>
         <IconButton logoSize={scale(30)} image={Images.googleLogo} style={{ marginRight: scale(60) }} />
         <IconButton logoSize={scale(25)} image={Images.facebookLogo} />
-      </View>
+      </View> */}
       </>}
 
     </View>

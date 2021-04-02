@@ -19,6 +19,9 @@ export const Images = {
     locationBlue: require('../assets/images/locationBlue.png'),
     locationWhite: require('../assets/images/locationWhite.png'),
     googleLogo: require('../assets/background/googleLogo.png'),
-    facebookLogo: require('../assets/background/facebookLogo.png')
+    facebookLogo: require('../assets/background/facebookLogo.png'),
+    mapTabIcon1: require('../assets/background/mapTabIcon1.png'),
+    mapTabIcon2: require('../assets/background/mapTabIcon2.png'),
+
   };
   
