@@ -1,13 +1,13 @@
 import React from 'react';
-import { ImageBackground, Image, TouchableOpacity, StyleSheet, Dimensions, Text } from 'react-native';
+import {
+    ImageBackground, TouchableOpacity, StyleSheet, Dimensions, Text,
+    KeyboardAvoidingView,
+    TouchableWithoutFeedback,
+    Keyboard
+} from 'react-native';
 import { scale } from 'react-native-size-matters';
-import Box from '../components/Box';
-import Styles from '../constants/Styles';
-import * as Animatable from 'react-native-animatable';
 import { Images } from '../constants/Images';
-import LinearGradient from 'react-native-linear-gradient';
 import { Colors } from '../constants/Colors';
-import { Footer, FooterTab, View } from 'native-base';
 import LoginComponent from '../components/LoginComponent';
 import RegisterComponent from '../components/RegisterComponent';
 
@@ -15,10 +15,13 @@ export default function LoginPage(props) {
     const [currentTab, setCurrentTab] = React.useState('login')
 
     return (
-
         <ImageBackground resizeMode='stretch' source={Images.loginBackground} style={styles.background}>
-
-            {currentTab=='login' ? <LoginComponent/> : <RegisterComponent/> }
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}>
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    {currentTab == 'login' ? <LoginComponent /> : <RegisterComponent />}
+                </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
 
             <TouchableOpacity
                 style={{
@@ -53,13 +56,23 @@ const styles = StyleSheet.create({
         position: 'absolute',
     },
     login: {
-        width: width * 0.47, height: height * 0.07,
-        position: 'absolute', bottom: scale(0), alignItems: 'center', justifyContent: 'center', left: scale(0),
+        width: width * 0.47,
+        height: height * 0.08,
+        position: 'absolute',
+        marginTop: height * 0.84,
+        alignItems: 'center',
+        justifyContent: 'center',
+        left: scale(0),
         borderTopEndRadius: scale(30)
     },
     register: {
-        width: width * 0.47, height: height * 0.07,
-        position: 'absolute', bottom: scale(0), alignItems: 'center', justifyContent: 'center', right: scale(0),
+        width: width * 0.47,
+        height: height * 0.08,
+        position: 'absolute',
+        marginTop: height * 0.84,
+        alignItems: 'center',
+        justifyContent: 'center',
+        right: scale(0),
         borderTopStartRadius: scale(30)
     },
 

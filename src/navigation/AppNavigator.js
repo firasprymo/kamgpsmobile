@@ -5,7 +5,7 @@ import {Transition} from 'react-native-reanimated';
 import createAnimatedSwitchNavigator from 'react-navigation-animated-switch';
 import {Colors} from '../constants/Colors';
 import WelcomPage from '../pages/WelcomPage';
-import {StatusBar} from 'react-native';
+import {Image, StatusBar} from 'react-native';
 import IntroductionPage from '../pages/IntroductionPage';
 import LoginPage from '../pages/LoginPage';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
@@ -13,11 +13,17 @@ import Maps from '../pages/Maps';
 import Favourite from '../pages/Favourite';
 import Notification from '../pages/Notification';
 import Contribution from '../pages/Contribution';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconAnt from 'react-native-vector-icons/AntDesign';
+import { Images } from '../constants/Images';
 // import {
 //   AnimationType,
 //   getAnimatingBottomBar,
 // } from 'react-native-animating-bottom-tab-bar';
+
+
+
+
 const navOptionsHandler = navigation => ({
   headerShown: false,
 });
@@ -48,28 +54,33 @@ const homeStack = createBottomTabNavigator({
       const { routeName } = navigation.state;
       let iconName;
       if (routeName === 'Maps') {
-        iconName = focused
-          ? 'map-marker-distance'
-          : 'map-marker-distance';
+        return( focused
+          ? <Image source={Images.mapTabIcon2} />
+          : <Image source={Images.mapTabIcon1} />);
       } else if (routeName === 'Notification') {
         iconName = focused ? 'bell-ring-outline' : 'bell-ring-outline';
       } else if (routeName === 'Favourite') {
         iconName = focused ? 'heart-outline' : 'heart-outline';
       } else if (routeName === 'Contribution') {
-        iconName = focused ? 'account-multiple-plus-outline' : 'account-multiple-plus-outline';
+        return(  focused ? 
+          <IconAnt size={25} color={Colors.tabColor} name='addusergroup'/> :
+        <IconAnt size={25} color={tintColor} name='addusergroup'/>);
       }
 
       // You can return any component that you like here!
-      return <Icon name={iconName} size={25} color={tintColor} />;
+      return <IconMaterial name={iconName} size={25} color={tintColor} />;
     },
   }),
   tabBarOptions: {
-    activeTintColor: Colors.backgroundColor1,
+    activeTintColor: Colors.tabColor,
     inactiveTintColor: 'gray',
+    style: {
+      backgroundColor:Colors.tabsBackground,
+    }
   },
 }
 )
-const welcomStack = createStackNavigator({
+const welcomeStack = createStackNavigator({
   Welcome: {
     screen: WelcomPage,
     navigationOptions: navOptionsHandler,
@@ -90,12 +101,12 @@ const authStack = createStackNavigator({
 
 const appNavigator = createAnimatedSwitchNavigator(
   {
-    Welcome: welcomStack,
+    Welcome: welcomeStack,
     Auth: authStack,
     Home: homeStack,
   },
   {
-    initialRouteName: 'Home',
+    initialRouteName: 'Welcome',
     transition: (
       <Transition.Together>
         <Transition.In type="fade" durationMs={500} />

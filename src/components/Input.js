@@ -20,7 +20,7 @@ export default function Input(props) {
       />
     </View>
     { props.errorMessage=='' ? 
-      <View style={{marginBottom: scale(20)}}></View> : 
+      <View style={{marginBottom: scale(17)}}></View> : 
       <Text style={{color:Colors.red, marginLeft:scale(10) }} >{props.errorMessage}</Text> }
     </View>
   );

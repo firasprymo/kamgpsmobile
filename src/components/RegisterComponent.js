@@ -139,6 +139,7 @@ export default function RegisterComponent(props) {
                         nav={setCodeInput}/> :
         <> 
         <ProfilImageUpload
+        style={{marginTop:scale(10)}}
         onPress={() => { launchImageLibraryFunction() }}
         source={file.fileUri != '' ? { uri: file.fileUri } : null} />
           <Input
@@ -146,7 +147,7 @@ export default function RegisterComponent(props) {
         name='user'
         value={username}
         onChangeText={setUsername}
-        style={{ marginTop: scale(30) }}
+        style={{ marginTop: scale(40) }}
         errorMessage={usernameErrorMessage} />
       <Input
         keyboardType='email-address'
@@ -177,7 +178,7 @@ export default function RegisterComponent(props) {
         title="REGISTER"
         style={{ marginTop: scale(5) }} />
 
-      <Text style={styles.text}>
+      {/* <Text style={styles.text}>
         Ou s'identifier avec
       </Text>
       <View
@@ -193,7 +194,7 @@ export default function RegisterComponent(props) {
         <IconButton
           logoSize={scale(25)}
           image={Images.facebookLogo} />
-      </View>
+      </View> */}
         </>}
       
     </View>

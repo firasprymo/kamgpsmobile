@@ -10,6 +10,8 @@ export const Colors = {
   light: '#e9f7ef',
   buttonColor: '#4dc1e1',
   white: '#fff',
-  red: 'crimson'
+  red: 'crimson',
+  tabColor: '#254FC5',
+  tabsBackground: 'F1F1F1',
 
 };
