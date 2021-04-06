@@ -15,8 +15,21 @@ import { Images } from '../constants/Images';
 
 export default function Favourite(props) {
   const [currentTab, setCurrentTab] = useState(true)
-  const tab1Color = currentTab ? Colors.tabColor : Colors.grey1
-  const tab2Color = !currentTab ? Colors.tabColor : Colors.grey1
+  var tab1Color = Colors.grey1
+  var tab2Color = Colors.grey1
+  if (currentTab) {
+    tab1Color = Colors.tabColor;
+  } else {
+    tab1Color = Colors.grey1;
+  }
+  if (!currentTab) {
+    tab2Color = Colors.tabColor;
+  } else {
+    tab2Color = Colors.grey1;
+  }
+
+
+
   return (
     <View style={styles.container}>
         <TouchableOpacity style={{ padding: scale(5) }}>

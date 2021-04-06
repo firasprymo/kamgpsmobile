@@ -32,6 +32,7 @@ StatusBar.setBarStyle('dark-content');
 
 
 const homeStack = createBottomTabNavigator({
+  
   Maps: {
     screen: Maps,
     navigationOptions: navOptionsHandler,
@@ -106,7 +107,7 @@ const appNavigator = createAnimatedSwitchNavigator(
     Home: homeStack,
   },
   {
-    initialRouteName: 'Home',
+    initialRouteName: 'Welcome',
     transition: (
       <Transition.Together>
         <Transition.In type="fade" durationMs={500} />
