@@ -16,7 +16,8 @@ export default function ValidationComponent(props) {
 
     const handelOkBtn = () => {
         if (checkCode(code)) {
-            alert('valid')
+            
+            props.navigation.navigate('Home')
         }
     }
     const checkCode = (code) => {
@@ -79,8 +80,7 @@ const styles = StyleSheet.create(
             textAlign:'center'
         },
         back: {
-            marginBottom: scale(10),
-            marginTop: scale(60),
+            marginTop: scale(30),
             color: Colors.white,
         }
     }

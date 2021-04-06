@@ -42,7 +42,7 @@ export default function LoginComponent(props) {
     <View style={styles.container}>
       <Logo />
 
-      { codeInput ? <ValidationComponent parentComponent='login' nav={setCodeInput}/> :
+      { codeInput ? <ValidationComponent navigation={props.navigation} parentComponent='login' nav={setCodeInput}/> :
         <> 
         <Input
         keyboardType= 'numeric'

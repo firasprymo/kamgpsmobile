@@ -19,13 +19,18 @@ export default function LoginPage(props) {
     return (
         <ImageBackground resizeMode='stretch' source={Images.loginBackground} style={styles.background}>
             <StatusBar hidden />
-            <KeyboardAvoidingView
+            <KeyboardAvoidingView style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent:'space-between'
+    }}
                 behavior={Platform.OS === "ios" ? "padding" : "height"}>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                    {currentTab == 'login' ? <LoginComponent /> : <RegisterComponent />}
-                </TouchableWithoutFeedback>
-            </KeyboardAvoidingView>
-            <View style={{width: width, flexDirection:'row', justifyContent: 'space-between', marginTop: scale(100)}}>
+                    <>
+                    {currentTab == 'login' ? <LoginComponent navigation={props.navigation} /> : <RegisterComponent />}
+                
+            
+            <View style={{width: width, flexDirection:'row', justifyContent: 'space-between'}}>
             <TouchableOpacity
                 style={{
                     ...styles.login,
@@ -43,7 +48,9 @@ export default function LoginPage(props) {
                 <Text style={{ color: Colors.white, fontSize: scale(16) }}>REGISTER</Text>
             </TouchableOpacity>
             </View>
-            
+            </>
+            </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
         </ImageBackground>
 
     );
