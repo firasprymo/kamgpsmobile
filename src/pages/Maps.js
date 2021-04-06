@@ -29,8 +29,7 @@ export default function Maps(props) {
 const { height, width } = Dimensions.get('screen');
 const styles = StyleSheet.create({
   mapcontainer: {
-        height: height * 0.8,
-        width: width ,
+        flex:1,
         justifyContent: 'flex-end',
         alignItems: 'center',
   },

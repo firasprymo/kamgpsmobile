@@ -13,5 +13,8 @@ export const Colors = {
   red: 'crimson',
   tabColor: '#254FC5',
   tabsBackground: 'F1F1F1',
+  grey1: '#757064',
+  grey2: '#474540',
+  yellow: '#e8ad20',
 
 };

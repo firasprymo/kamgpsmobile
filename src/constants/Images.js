@@ -22,6 +22,10 @@ export const Images = {
     facebookLogo: require('../assets/background/facebookLogo.png'),
     mapTabIcon1: require('../assets/background/mapTabIcon1.png'),
     mapTabIcon2: require('../assets/background/mapTabIcon2.png'),
+    food1: require('../assets/background/food1.png'),
+    food2: require('../assets/background/food2.png'),
+    food3: require('../assets/background/food3.png'),
+    food4: require('../assets/background/food4.png'),
 
   };
   

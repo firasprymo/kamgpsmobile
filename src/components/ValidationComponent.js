@@ -24,7 +24,7 @@ export default function ValidationComponent(props) {
             setCodeErrorMessage("This field is required")
             return false
         }
-        else if (code.length != 6) {
+        else if (code.length != 4) {
             setCodeErrorMessage('The code is 6 digits length')
             return false
         }
