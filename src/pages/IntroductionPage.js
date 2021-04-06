@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImageBackground, Image, StyleSheet, Dimensions, View, Text } from 'react-native';
+import { ImageBackground, Image, StyleSheet, Dimensions, View, Text, StatusBar } from 'react-native';
 import { scale } from 'react-native-size-matters';
 import Box from '../components/Box';
 import Styles from '../constants/Styles';
@@ -15,6 +15,7 @@ export default function IntroductionPage(props) {
 
   return (
     <Box flex={1}>
+      <StatusBar hidden />
       <ImageBackground source={Images.introductionBackground} style={styles.background}>
         <Logo style={{ marginTop: scale(20) }} />
         <Swiper
@@ -97,7 +98,8 @@ const { height, width } = Dimensions.get('screen');
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    alignItems: "center"
+    alignItems: "center",
+    paddingTop: scale(20)
   },
   map: {
     width: width,

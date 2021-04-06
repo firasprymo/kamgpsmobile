@@ -3,7 +3,9 @@ import {
     ImageBackground, TouchableOpacity, StyleSheet, Dimensions, Text,
     KeyboardAvoidingView,
     TouchableWithoutFeedback,
-    Keyboard
+    Keyboard,
+    StatusBar,
+    View
 } from 'react-native';
 import { scale } from 'react-native-size-matters';
 import { Images } from '../constants/Images';
@@ -16,13 +18,14 @@ export default function LoginPage(props) {
 
     return (
         <ImageBackground resizeMode='stretch' source={Images.loginBackground} style={styles.background}>
+            <StatusBar hidden />
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     {currentTab == 'login' ? <LoginComponent /> : <RegisterComponent />}
                 </TouchableWithoutFeedback>
             </KeyboardAvoidingView>
-
+            <View style={{width: width, flexDirection:'row', justifyContent: 'space-between', marginTop: scale(100)}}>
             <TouchableOpacity
                 style={{
                     ...styles.login,
@@ -39,6 +42,8 @@ export default function LoginPage(props) {
                 onPress={() => { setCurrentTab('register') }} >
                 <Text style={{ color: Colors.white, fontSize: scale(16) }}>REGISTER</Text>
             </TouchableOpacity>
+            </View>
+            
         </ImageBackground>
 
     );
@@ -48,7 +53,9 @@ const { height, width } = Dimensions.get('screen');
 const styles = StyleSheet.create({
     background: {
         flex: 1,
-        alignItems: "center"
+        alignItems: "center",
+        paddingTop: scale(20),
+        justifyContent:'space-between'
     },
     shape: {
         width: width * 2,
@@ -56,24 +63,20 @@ const styles = StyleSheet.create({
         position: 'absolute',
     },
     login: {
-        width: width * 0.47,
-        height: height * 0.08,
-        position: 'absolute',
-        marginTop: height * 0.84,
+        width: scale(150),
+        height: scale(50),
         alignItems: 'center',
         justifyContent: 'center',
-        left: scale(0),
-        borderTopEndRadius: scale(30)
+        borderTopEndRadius: scale(30),
+        alignSelf:'flex-end'
     },
     register: {
-        width: width * 0.47,
-        height: height * 0.08,
-        position: 'absolute',
-        marginTop: height * 0.84,
+        width: scale(150),
+        height: scale(50),
         alignItems: 'center',
         justifyContent: 'center',
-        right: scale(0),
-        borderTopStartRadius: scale(30)
+        borderTopStartRadius: scale(30),
+    
     },
 
 });

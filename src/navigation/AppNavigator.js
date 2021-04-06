@@ -27,8 +27,8 @@ import { Images } from '../constants/Images';
 const navOptionsHandler = navigation => ({
   headerShown: false,
 });
-StatusBar.setBackgroundColor(Colors.welcomeColor1);
-StatusBar.setBarStyle(Colors.light);
+StatusBar.setBackgroundColor(Colors.white);
+StatusBar.setBarStyle('dark-content');
 
 
 const homeStack = createBottomTabNavigator({
@@ -106,7 +106,7 @@ const appNavigator = createAnimatedSwitchNavigator(
     Home: homeStack,
   },
   {
-    initialRouteName: 'Welcome',
+    initialRouteName: 'Home',
     transition: (
       <Transition.Together>
         <Transition.In type="fade" durationMs={500} />

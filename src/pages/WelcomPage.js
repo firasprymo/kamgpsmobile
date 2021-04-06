@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImageBackground, Image, StyleSheet, Dimensions, View } from 'react-native';
+import { ImageBackground, Image, StyleSheet, Dimensions, View, StatusBar } from 'react-native';
 import { scale } from 'react-native-size-matters';
 import Box from '../components/Box';
 import Styles from '../constants/Styles';
@@ -17,6 +17,7 @@ export default function WelcomPage(props) {
   }, []);
   return (
     <ImageBackground style={styles.background} source={Images.welcomeBackground}>
+      <StatusBar hidden />
       <Animatable.Image
         style={styles.logo}
         animation="bounceIn"
