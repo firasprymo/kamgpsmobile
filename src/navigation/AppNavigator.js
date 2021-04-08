@@ -16,6 +16,8 @@ import Contribution from '../pages/Contribution';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconAnt from 'react-native-vector-icons/AntDesign';
 import { Images } from '../constants/Images';
+import EditCard from '../pages/EditCard';
+import AddPlace from '../pages/AddPlace';
 // import {
 //   AnimationType,
 //   getAnimatingBottomBar,
@@ -30,6 +32,30 @@ const navOptionsHandler = navigation => ({
 StatusBar.setBackgroundColor(Colors.white);
 StatusBar.setBarStyle('dark-content');
 
+const contributionStack = createStackNavigator({
+  contribution: {
+    screen: Contribution,
+    navigationOptions: navOptionsHandler,
+  },
+  EditCard: {
+    screen: EditCard ,
+    navigationOptions: navOptionsHandler,
+  },
+  AddPlace: {
+    screen: AddPlace ,
+    navigationOptions: navOptionsHandler,
+  },
+})
+contributionStack.navigationOptions = ({ navigation }) => {
+  let tabBarVisible = true;
+  if (navigation.state.index > 0) {
+    tabBarVisible = false;
+  }
+
+  return {
+    tabBarVisible,
+  };
+};
 
 const homeStack = createBottomTabNavigator({
   
@@ -46,7 +72,7 @@ const homeStack = createBottomTabNavigator({
     navigationOptions: navOptionsHandler,
   },
   Contribution: {
-    screen: Contribution,
+    screen: contributionStack,
     navigationOptions: navOptionsHandler,
   },
 },{
@@ -81,6 +107,7 @@ const homeStack = createBottomTabNavigator({
   },
 }
 )
+
 const welcomeStack = createStackNavigator({
   Welcome: {
     screen: WelcomPage,
@@ -107,7 +134,7 @@ const appNavigator = createAnimatedSwitchNavigator(
     Home: homeStack,
   },
   {
-    initialRouteName: 'Welcome',
+    initialRouteName: 'Home',
     transition: (
       <Transition.Together>
         <Transition.In type="fade" durationMs={500} />

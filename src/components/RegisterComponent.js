@@ -134,9 +134,10 @@ export default function RegisterComponent(props) {
     <View style={styles.container}>
       
         { codeInput ? <ValidationComponent
+                        navigation={props.navigation} 
                         style={{marginTop: scale(80)}}
                         parentComponent='register'
-                        nav={setCodeInput}/> :
+                        nav={props.nav}/> :
         <> 
         <ProfilImageUpload
         style={{marginTop:scale(10)}}
