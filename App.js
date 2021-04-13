@@ -18,7 +18,7 @@
  import theme from './src/constants/theme';
  import AppNavigator from './src/navigation/AppNavigator';;
  import Styles from './src/constants/Styles';
- console.disableYellowBox = true;
+//  console.disableYellowBox = true;
  export const queryClient = new QueryClient();
  const App = () => {
  

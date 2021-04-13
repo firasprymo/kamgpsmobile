@@ -18,6 +18,8 @@ import IconAnt from 'react-native-vector-icons/AntDesign';
 import { Images } from '../constants/Images';
 import EditCard from '../pages/EditCard';
 import AddPlace from '../pages/AddPlace';
+import EditProfil from '../pages/EditProfil';
+import Payment from '../pages/Payment';
 // import {
 //   AnimationType,
 //   getAnimatingBottomBar,
@@ -46,6 +48,20 @@ const contributionStack = createStackNavigator({
     navigationOptions: navOptionsHandler,
   },
 })
+const favouriteStack = createStackNavigator({
+  Favourite: {
+    screen: Favourite,
+    navigationOptions: navOptionsHandler,
+  },
+  EditProfil: {
+    screen: EditProfil ,
+    navigationOptions: navOptionsHandler,
+  },
+  Payment: {
+    screen: Payment ,
+    navigationOptions: navOptionsHandler,
+  },
+})
 contributionStack.navigationOptions = ({ navigation }) => {
   let tabBarVisible = true;
   if (navigation.state.index > 0) {
@@ -64,7 +80,7 @@ const homeStack = createBottomTabNavigator({
     navigationOptions: navOptionsHandler,
   },
   Favourite: {
-    screen: Favourite,
+    screen: favouriteStack,
     navigationOptions: navOptionsHandler,
   },
   Notification: {

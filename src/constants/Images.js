@@ -32,5 +32,8 @@ export const Images = {
     telephone: require('../assets/background/telephone.png'),
     cancel: require('../assets/background/cancel.png'),
     mapCard : require('../assets/background/mapCard.png'),
+    paypal: require('../assets/background/paypal.png'),
+    masterCard: require('../assets/background/mastercard.png'),
+    visa: require('../assets/background/visa.png'),
   };
   
