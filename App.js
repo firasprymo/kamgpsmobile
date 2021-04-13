@@ -15,12 +15,10 @@
    SafeAreaView,
  } from 'react-native';
  import {QueryClient, QueryClientProvider} from 'react-query';
- import {Colors} from './src/constants/Colors';
  import theme from './src/constants/theme';
  import AppNavigator from './src/navigation/AppNavigator';;
  import Styles from './src/constants/Styles';
- import WelcomPage from './src/pages/WelcomPage'
- 
+//  console.disableYellowBox = true;
  export const queryClient = new QueryClient();
  const App = () => {
  

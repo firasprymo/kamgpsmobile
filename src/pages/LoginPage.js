@@ -27,7 +27,7 @@ export default function LoginPage(props) {
                 behavior={Platform.OS === "ios" ? "padding" : "height"}>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <>
-                    {currentTab == 'login' ? <LoginComponent navigation={props.navigation} /> : <RegisterComponent />}
+                    {currentTab == 'login' ? <LoginComponent navigation={props.navigation} /> : <RegisterComponent nav = {setCurrentTab}  />}
                 
             
             <View style={{width: width, flexDirection:'row', justifyContent: 'space-between'}}>

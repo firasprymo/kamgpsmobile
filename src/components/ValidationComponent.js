@@ -16,7 +16,8 @@ export default function ValidationComponent(props) {
 
     const handelOkBtn = () => {
         if (checkCode(code)) {
-            
+            props.parentComponent == 'register'?
+            props.nav('login') :
             props.navigation.navigate('Home')
         }
     }

@@ -1,6 +1,6 @@
 import { Card, Text } from 'native-base';
 import React from 'react';
-import { Image, View } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
 import { scale } from 'react-native-size-matters';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Colors } from '../constants/Colors';
@@ -41,7 +41,9 @@ export default function CardComponent({type,data}) {
                     </View>
                     <Dash dashGap={4} dashThickness={1} dashColor={Colors.tabColor} style={{width:scale(160), height:1}}/>
                     <View style={{flexDirection:'row', flex: 2,}}>
-                        <Image source={Images.mapTabIcon2} style={{width:scale(30), height: scale(30), margin: scale(15)}} />
+                        <TouchableOpacity onPress={()=>alert(data.placeName)} style={{margin: scale(15) }}>
+                        <Image source={Images.mapTabIcon2} style={{width:scale(30), height: scale(30)}} />
+                        </TouchableOpacity>
                         <View style={{flexDirection: 'column', alignItems: 'center', padding:scale(10)}}>
                             <Text style={{color: Colors.grey1}}>Min</Text>
                             <Text style={{color: Colors.grey1}}>{data.duration}</Text>

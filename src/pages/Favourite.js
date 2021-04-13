@@ -37,11 +37,19 @@ export default function Favourite(props) {
         </TouchableOpacity>
 
       <View style={{ flexDirection: 'row', width: width, alignItems:'center' }}>
-        <TouchableOpacity style={{ paddingHorizontal: scale(10) }}>
+        <TouchableOpacity 
+          onPress= {()=>props.navigation.navigate('Payment')}
+          style={{ paddingHorizontal: scale(10) }}>
           <Ionicons name='card' size={40} color={Colors.tabColor} />
         </TouchableOpacity>
         <View style={{ position: 'absolute', right: scale(0), paddingHorizontal: scale(5) }}>
-          <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', padding: scale(10) }}>
+          <TouchableOpacity 
+            onPress= { ()=> props.navigation.navigate('EditProfil') }
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: scale(10)
+              }}>
             <SimpleLineIcons name='pencil' size={25} color={Colors.tabColor} />
             <Text style={{ color: Colors.tabColor, fontSize: scale(10), fontWeight: 'bold', marginTop: scale(2) }} >
               Modifier profil

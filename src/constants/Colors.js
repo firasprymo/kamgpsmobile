@@ -9,12 +9,16 @@ export const Colors = {
   green1: '#b7e7cc',
   light: '#e9f7ef',
   buttonColor: '#4dc1e1',
-  white: '#fff',
+  white: '#fffdfa',
   red: 'crimson',
   tabColor: '#254FC5',
   tabsBackground: 'F1F1F1',
   grey1: '#757064',
   grey2: '#474540',
+  grey3: '#f2f2f2',
+  grey4: '#d3d3d3',
   yellow: '#e8ad20',
+  purple: '#4A69D9',
+  
 
 };
