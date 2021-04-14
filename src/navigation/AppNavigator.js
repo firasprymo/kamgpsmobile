@@ -20,6 +20,8 @@ import EditCard from '../pages/EditCard';
 import AddPlace from '../pages/AddPlace';
 import EditProfil from '../pages/EditProfil';
 import Payment from '../pages/Payment';
+import EditPlace from '../pages/EditPlace';
+import SelectPlace from '../pages/SelectPlace';
 // import {
 //   AnimationType,
 //   getAnimatingBottomBar,
@@ -47,6 +49,14 @@ const contributionStack = createStackNavigator({
     screen: AddPlace ,
     navigationOptions: navOptionsHandler,
   },
+  EditPlace: {
+    screen: EditPlace ,
+    navigationOptions: navOptionsHandler,
+  },
+  SelectPlace: {
+    screen: SelectPlace ,
+    navigationOptions: navOptionsHandler,
+  },
 })
 const favouriteStack = createStackNavigator({
   Favourite: {
@@ -63,6 +73,16 @@ const favouriteStack = createStackNavigator({
   },
 })
 contributionStack.navigationOptions = ({ navigation }) => {
+  let tabBarVisible = true;
+  if (navigation.state.index > 0) {
+    tabBarVisible = false;
+  }
+
+  return {
+    tabBarVisible,
+  };
+};
+favouriteStack.navigationOptions = ({ navigation }) => {
   let tabBarVisible = true;
   if (navigation.state.index > 0) {
     tabBarVisible = false;

@@ -7,14 +7,14 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather'
 
 
-export default function AddPlace(props) {
+export default function EditPlace(props) {
 
     return (
         <View style={styles.container} >
 
             <View style={styles.headBar} >
                 <TouchableOpacity
-                    onPress={() => props.navigation.navigate('contribution')}
+                    onPress={() => props.navigation.navigate('EditCard')}
                     style={{ padding: scale(5) }}>
                     <Feather name='x' size={30} color={Colors.grey2} />
                 </TouchableOpacity>
@@ -26,7 +26,7 @@ export default function AddPlace(props) {
                     justifyContent: 'center',
                     marginRight: scale(30)
                 }} >
-                    <Text style={{ color: Colors.grey1, fontWeight: '300', fontSize: scale(18) }}>Ajouter un lieu</Text>
+                    <Text style={{ color: Colors.grey1, fontWeight: '300', fontSize: scale(18) }}>Modifier un lieu</Text>
                 </View>
                 <TouchableOpacity
                     style={{ padding: scale(5) }}>
@@ -54,6 +54,17 @@ export default function AddPlace(props) {
                 paddingLeft: scale(10)
             }}>
                 <TextInput placeholder='Catégorie' style={{ flex: 1, fontSize: scale(16) }} />
+            </View>
+            <View style={{
+                width: scale(260),
+                height: scale(45),
+                borderWidth: 1,
+                borderColor: Colors.grey4,
+                borderRadius: scale(5),
+                marginTop: scale(20),
+                paddingLeft: scale(10)
+            }}>
+                <TextInput placeholder='Number' style={{ flex: 1, fontSize: scale(16) }} />
             </View>
             <Text style={{
                 color: Colors.grey1,

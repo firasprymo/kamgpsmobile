@@ -111,7 +111,7 @@ export default function Payment(props) {
                         onPress={() => setChecked('3')}>
                         <Image source={Images.masterCard} resizeMode='contain' style={styles.image} />
                         <Text style={{ color: Colors.grey1, marginHorizontal: scale(10), fontSize: scale(10) }}>johndoe@email.com</Text>
-                        <Radio selectrueted={checked == '3'}
+                        <Radio selected={checked == '3'}
                            color={Colors.purple}
                            selectedColor={Colors.purple}
                             disabled

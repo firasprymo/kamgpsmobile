@@ -30,7 +30,7 @@ export default function EditCard(props) {
         <TouchableOpacity onPress= {()=> {deleteNotif(item)} } style={styles.button} >
             <Image source={Images.cancel} style={{width:scale(25), height: scale(25)}} />
         </TouchableOpacity>,
-        <TouchableOpacity style={styles.button} >
+        <TouchableOpacity onPress={() => props.navigation.navigate('EditPlace')} style={styles.button} >
             <Image source={Images.pencil} style={{width:scale(30), height: scale(30)}} />
         </TouchableOpacity>
     ];
