@@ -35,5 +35,9 @@ export const Images = {
     paypal: require('../assets/background/paypal.png'),
     masterCard: require('../assets/background/mastercard.png'),
     visa: require('../assets/background/visa.png'),
+    police1: require('../assets/background/police1.jpg'),
+    police2: require('../assets/background/police2.jpeg'),
+    hospital1: require('../assets/background/hospital1.jpeg'),
+    hospital2: require('../assets/background/hospital2.jpg'),
   };
   

@@ -178,24 +178,6 @@ export default function RegisterComponent(props) {
         onPress={() => handelLoginBtn(phoneNumber)}
         title="REGISTER"
         style={{ marginTop: scale(5) }} />
-
-      {/* <Text style={styles.text}>
-        Ou s'identifier avec
-      </Text>
-      <View
-        style={{
-          flexDirection: 'row',
-          marginTop: scale(20),
-          marginBottom: scale(40)
-        }}>
-        <IconButton
-          logoSize={scale(30)}
-          image={Images.googleLogo}
-          style={{ marginRight: scale(60) }} />
-        <IconButton
-          logoSize={scale(25)}
-          image={Images.facebookLogo} />
-      </View> */}
         </>}
       
     </View>
