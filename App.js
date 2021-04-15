@@ -18,12 +18,16 @@
  import theme from './src/constants/theme';
  import AppNavigator from './src/navigation/AppNavigator';;
  import Styles from './src/constants/Styles';
+
 //  console.disableYellowBox = true;
+
+
  export const queryClient = new QueryClient();
  const App = () => {
  
    return (
-     <ThemeProvider theme={theme}>
+  
+     
        <QueryClientProvider client={queryClient}>
          <SafeAreaView style={{flex: 1}}>
            <FlashMessage
@@ -37,7 +41,8 @@
            <AppNavigator />
          </SafeAreaView>
        </QueryClientProvider>
-     </ThemeProvider>
+
+     
    );
  };
  

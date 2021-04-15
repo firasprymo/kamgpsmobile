@@ -7,21 +7,22 @@ import { scale } from 'react-native-size-matters';
 export default function Input(props) {
   return (
     <View>
-    <View style={[styles.container,{borderColor: props.errorMessage=='' ? '#d9d9d9' : Colors.red}, props.style]}>
-      <Icon name={props.name} size={15} color="white" />
-      <TextInput
-        value={props.value}
-        onChangeText = {props.onChangeText}
-        style={[styles.text, props.styleText]}
-        selectionColor='white'
-        keyboardType= {props.keyboardType} 
-        placeholder= {props.placeholder}
-        placeholderTextColor='white'
-      />
-    </View>
-    { props.errorMessage=='' ? 
-      <View style={{marginBottom: scale(17)}}></View> : 
-      <Text style={{color:Colors.red, marginLeft:scale(10) }} >{props.errorMessage}</Text> }
+      <View style={[styles.container, { borderColor: props.errorMessage == '' ? '#d9d9d9' : Colors.red }, props.style]}>
+        <Icon name={props.name} size={15} color="white" />
+        <TextInput
+          value={props.value}
+          onChangeText={props.onChangeText}
+          style={[styles.text, props.styleText]}
+          selectionColor='white'
+          keyboardType={props.keyboardType}
+          placeholder={props.placeholder}
+          placeholderTextColor='white'
+          secureTextEntry={props.secureTextEntry}
+        />
+      </View>
+      { props.errorMessage == '' ?
+        <View style={{ marginBottom: scale(17) }}></View> :
+        <Text style={{ color: Colors.red, marginLeft: scale(10) }} >{props.errorMessage}</Text>}
     </View>
   );
 }
@@ -30,7 +31,7 @@ const styles = StyleSheet.create(
   {
     container: {
       width: scale(240), height: scale(35), backgroundColor: 'rgba(255, 255, 255,0.08)',
-       borderWidth: 1, borderRadius: scale(7),
+      borderWidth: 1, borderRadius: scale(7),
       flexDirection: "row", alignItems: 'center', paddingHorizontal: scale(10)
     },
     text: {

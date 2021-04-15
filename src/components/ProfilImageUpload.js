@@ -2,8 +2,6 @@ import React from 'react';
 import {Dimensions, Image, Platform, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Colors} from '../constants/Colors';
 import {scale} from 'react-native-size-matters';
-import IconButton from './IconButton';
-import { Images } from '../constants/Images';
 import  Icon  from 'react-native-vector-icons/FontAwesome';
 
 const ProfilImageUpload = props => {

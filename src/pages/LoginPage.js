@@ -1,34 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     ImageBackground, TouchableOpacity, StyleSheet, Dimensions, Text,
     KeyboardAvoidingView,
     TouchableWithoutFeedback,
     Keyboard,
     StatusBar,
-    View
+    View,
+    SafeAreaView,
+    TextInput,
+    ScrollView
 } from 'react-native';
 import { scale } from 'react-native-size-matters';
 import { Images } from '../constants/Images';
 import { Colors } from '../constants/Colors';
 import LoginComponent from '../components/LoginComponent';
 import RegisterComponent from '../components/RegisterComponent';
+import { Button, Content } from 'native-base';
 
 export default function LoginPage(props) {
-    const [currentTab, setCurrentTab] = React.useState('login')
 
+    const [currentTab, setCurrentTab] = useState('login')
     return (
         <ImageBackground resizeMode='stretch' source={Images.loginBackground} style={styles.background}>
-            <StatusBar hidden />
-            <KeyboardAvoidingView style={{
-        flex: 1,
-        alignItems: "center",
-        justifyContent:'space-between'
-    }}
-                behavior={Platform.OS === "ios" ? "padding" : "height"}>
-                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                    <>
-                    {currentTab == 'login' ? <LoginComponent navigation={props.navigation} /> : <RegisterComponent nav = {setCurrentTab}  />}
-                
+                <StatusBar hidden={true} />
+                    <ScrollView style={{width: width}}  >
+                    {currentTab == 'login' ? <LoginComponent navigation={props.navigation} /> : <RegisterComponent setCurrentTab = {setCurrentTab}  />}
+                    <View style={{height:scale(150),width:scale(20)}} />
+                    </ScrollView>
             
             <View style={{width: width, flexDirection:'row', justifyContent: 'space-between'}}>
             <TouchableOpacity
@@ -48,10 +46,9 @@ export default function LoginPage(props) {
                 <Text style={{ color: Colors.white, fontSize: scale(16) }}>REGISTER</Text>
             </TouchableOpacity>
             </View>
-            </>
-            </TouchableWithoutFeedback>
-            </KeyboardAvoidingView>
+            
         </ImageBackground>
+
 
     );
 }

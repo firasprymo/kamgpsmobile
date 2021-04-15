@@ -15,19 +15,43 @@ export default function ValidationComponent(props) {
     const [codeErrorMessage, setCodeErrorMessage] = useState('')
 
     const handelOkBtn = () => {
+
         if (checkCode(code)) {
-            props.parentComponent == 'register'?
-            props.nav('login') :
-            props.navigation.navigate('Home')
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+
+            var raw = JSON.stringify({ "phonenumber": props.phoneNumber, "code": code });
+
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+
+            fetch("http://catalogue.cubesolutions.tn:5112/api/v1/users/codeVerification", requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    console.log(result)
+                    if (result.message=="votre compte est confirme!"){
+                        props.setCurrentTab('login')
+                    }
+                    else {
+                        setCodeErrorMessage('invalid code')
+                    }
+                })
+                .catch(error => console.log('error', error));
+            
         }
     }
+
     const checkCode = (code) => {
         if (code == '') {
             setCodeErrorMessage("This field is required")
             return false
         }
         else if (code.length != 4) {
-            setCodeErrorMessage('The code is 6 digits length')
+            setCodeErrorMessage('The code is 4 digits length')
             return false
         }
         else {
@@ -39,8 +63,8 @@ export default function ValidationComponent(props) {
     return (
         <View style={[styles.container, props.style]}>
             <Text style={styles.text}>
-                We sent you a validation code
-                </Text>
+                We sent you a validation code to {props.phoneNumber}
+            </Text>
             <Input
                 placeholder='Write code here'
                 name='lock'
@@ -54,7 +78,7 @@ export default function ValidationComponent(props) {
                 title="OK"
                 style={{ marginTop: scale(30) }} />
 
-            <TextButton onPress={() => { props.nav(false) }}
+            <TextButton onPress={() => { props.setCodeInput(false) }}
                 style={styles.back}
                 fontSize={scale(14)}
                 color={Colors.white}
@@ -75,10 +99,10 @@ const styles = StyleSheet.create(
         text: {
             color: 'white',
             marginTop: scale(40),
-            width:scale(280),
+            width: scale(280),
             marginBottom: scale(10),
             fontSize: scale(12),
-            textAlign:'center'
+            textAlign: 'center'
         },
         back: {
             marginTop: scale(30),

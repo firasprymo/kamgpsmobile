@@ -22,6 +22,7 @@ import EditProfil from '../pages/EditProfil';
 import Payment from '../pages/Payment';
 import EditPlace from '../pages/EditPlace';
 import SelectPlace from '../pages/SelectPlace';
+import ResetPassword from '../pages/ResetPassword';
 // import {
 //   AnimationType,
 //   getAnimatingBottomBar,
@@ -160,6 +161,10 @@ const authStack = createStackNavigator({
     screen: LoginPage,
     navigationOptions: navOptionsHandler,
   },
+  ResetPassword: {
+    screen: ResetPassword ,
+    navigationOptions: navOptionsHandler,
+  }
   
 });
 
@@ -170,7 +175,7 @@ const appNavigator = createAnimatedSwitchNavigator(
     Home: homeStack,
   },
   {
-    initialRouteName: 'Home',
+    initialRouteName: 'Auth',
     transition: (
       <Transition.Together>
         <Transition.In type="fade" durationMs={500} />
@@ -180,3 +185,5 @@ const appNavigator = createAnimatedSwitchNavigator(
 );
 
 export default createAppContainer(appNavigator);
+
+

@@ -14,7 +14,9 @@ import ValidationComponent from './ValidationComponent';
 
 export default function RegisterComponent(props) {
 
-  const [ codeInput, setCodeInput ] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [ errorFromServer, setErrorFromServer ] = useState('')
+  const [codeInput, setCodeInput] = useState(false)
   const [phoneNumber, setPhoneNumber] = useState('')
   const [phoneErrorMessage, setPhoneErrorMessage] = useState('')
   const [username, setUsername] = useState('')
@@ -23,6 +25,10 @@ export default function RegisterComponent(props) {
   const [emailErrorMessage, setEmailErrorMessage] = useState('')
   const [address, setAddress] = useState('')
   const [addressErrorMessage, setaddressErrorMessage] = useState('')
+  const [password, setPassword] = useState('')
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
+  const [repassword, setRepassword] = useState('')
+  const [repasswordErrorMessage, setRepasswordErrorMessage] = useState('')
   const [file, setFile] = useState({
     filePath: '',
     fileData: '',
@@ -63,13 +69,58 @@ export default function RegisterComponent(props) {
     let pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     return pattern.test(String(email).toLowerCase())
   }
-  const handelLoginBtn = () => {
+  const handelRgisterBtn = () => {
+    setIsLoading(true)
+    let repasswordTest = checkRepassword(repassword)
+    let passwordTest = checkPassword(password)
     let phoneTest = checkPhone(phoneNumber)
     let usernameTest = checkUsername(username)
     let emailTest = checkEmail(email)
     let addressTest = checkAddress(address)
-    if (phoneTest && usernameTest && emailTest && addressTest) {
+    if (phoneTest && usernameTest && emailTest && addressTest && passwordTest && repasswordTest) {
+      
+      var myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+
+var raw = JSON.stringify({
+  "email":email,
+  "name":username,
+  "password":password,
+  "role":"admin",
+  "passwordConfirm":repassword,
+  "phonenumber":phoneNumber,
+  "address":address});
+
+var requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: raw,
+  redirect: 'follow'
+};
+
+  fetch("http://catalogue.cubesolutions.tn:5112/api/v1/users/signup", requestOptions)
+  .then(response => response.json())
+  .then(result => {
+    setIsLoading(false)
+    console.log(result)
+    if (result.status=='fail'){
+      if (result.errors.statusCode==410){
+        setErrorFromServer("account already exist")
+      }
+      else {
+        setErrorFromServer('Invalid input data')
+      }
+    } else if (result.status == 'success') {
       setCodeInput(true)
+    }
+    
+  })
+  .catch(error => {
+    // console.log('error', error)
+  });
+    }
+    else {
+      setIsLoading(false)
     }
 
   }
@@ -129,57 +180,106 @@ export default function RegisterComponent(props) {
       return true
     }
   }
+  const checkPassword = (password) => {
+    if (password == '') {
+      setPasswordErrorMessage("This field is required")
+      return false
+    }
+    else if (password.length < 4) {
+      setPasswordErrorMessage('4 charateres minimum')
+      return false
+    }
+    else {
+      setPasswordErrorMessage('')
+      return true
+    }
+  }
+  const checkRepassword = (repassword) => {
+    if (repassword == '') {
+      setRepasswordErrorMessage("This field is required")
+      return false
+    }
+    else if (repassword!=password) {
+      setRepasswordErrorMessage('Not identical')
+      return false
+    }
+    else {
+      setRepasswordErrorMessage('')
+      return true
+    }
+  }
 
   return (
     <View style={styles.container}>
-      
-        { codeInput ? <ValidationComponent
-                        navigation={props.navigation} 
-                        style={{marginTop: scale(80)}}
-                        parentComponent='register'
-                        nav={props.nav}/> :
-        <> 
-        <ProfilImageUpload
-        style={{marginTop:scale(10)}}
-        onPress={() => { launchImageLibraryFunction() }}
-        source={file.fileUri != '' ? { uri: file.fileUri } : null} />
+
+      { codeInput ? <ValidationComponent
+      phoneNumber={phoneNumber}
+      setCurrentTab={props.setCurrentTab}
+        style={{ marginTop: scale(80) }}
+        parentComponent='register'
+        setCodeInput={setCodeInput} /> :
+        <>
+          
+          <ProfilImageUpload
+            onPress={() => { launchImageLibraryFunction() }}
+            source={file.fileUri != '' ? { uri: file.fileUri } : null} />
+            <Text style={{ color: Colors.red, marginTop: scale(20) }}>{errorFromServer}</Text>
           <Input
-        placeholder='username'
-        name='user'
-        value={username}
-        onChangeText={setUsername}
-        style={{ marginTop: scale(40) }}
-        errorMessage={usernameErrorMessage} />
-      <Input
-        keyboardType='email-address'
-        placeholder='xyz@gmail.com'
-        name='envelope'
-        value={email}
-        onChangeText={setEmail}
-        style={{ marginTop: scale(5) }}
-        errorMessage={emailErrorMessage} />
-      <Input
-        keyboardType='numeric'
-        placeholder='phone number'
-        name='phone'
-        value={phoneNumber}
-        onChangeText={setPhoneNumber}
-        style={{ marginTop: scale(5) }}
-        errorMessage={phoneErrorMessage} />
-      <Input
-        placeholder='address'
-        name='map-marker'
-        value={address}
-        onChangeText={setAddress}
-        style={{ marginTop: scale(5) }}
-        errorMessage={addressErrorMessage} />
-      <MainButton
-        glowColor={Colors.logoBlue}
-        onPress={() => handelLoginBtn(phoneNumber)}
-        title="REGISTER"
-        style={{ marginTop: scale(5) }} />
+            placeholder='username'
+            name='user'
+            value={username}
+            onChangeText={setUsername}
+            style={{ marginTop: scale(10) }}
+            errorMessage={usernameErrorMessage} />
+          <Input
+            keyboardType='email-address'
+            placeholder='xyz@gmail.com'
+            name='envelope'
+            value={email}
+            onChangeText={setEmail}
+            style={{ marginTop: scale(5) }}
+            errorMessage={emailErrorMessage} />
+          <Input
+            keyboardType='numeric'
+            placeholder='phone number'
+            name='phone'
+            value={phoneNumber}
+            onChangeText={setPhoneNumber}
+            style={{ marginTop: scale(5) }}
+            errorMessage={phoneErrorMessage} />
+          <Input
+            placeholder='address'
+            name='map-marker'
+            value={address}
+            onChangeText={setAddress}
+            style={{ marginTop: scale(5) }}
+            errorMessage={addressErrorMessage} />
+          <Input
+            secureTextEntry={true}
+            placeholder='password'
+            name='lock'
+            value={password}
+            onChangeText={setPassword}
+            style={{ marginTop: scale(5) }}
+            errorMessage={passwordErrorMessage}
+          />
+          <Input
+            secureTextEntry={true}
+            placeholder='retype password'
+            name='lock'
+            value={repassword}
+            onChangeText={setRepassword}
+            style={{ marginTop: scale(5) }}
+            errorMessage={repasswordErrorMessage}
+          />
+          <MainButton
+            isLoading={isLoading}
+            glowColor={Colors.logoBlue}
+            onPress={() => handelRgisterBtn(phoneNumber)}
+            title="REGISTER"
+            style={{ marginTop: scale(5) }} />
         </>}
-      
+
     </View>
   );
 }
