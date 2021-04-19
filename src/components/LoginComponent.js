@@ -4,17 +4,21 @@ import { scale } from 'react-native-size-matters';
 import Logo from './Logo';
 import Input from './Input'
 import MainButton from './MainButton'
-import IconButton from './IconButton'
-import { Images } from '../constants/Images'
 import { Colors } from '../constants/Colors';
-import { useQuery } from 'react-query'
 import TextButton from './TextButton';
-import login from '../services/loginService'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { api } from '../constants/api_config';
+import { useAppContext } from '../context/AppContext';
 
-
-
-
-
+const storeData = async (value) => {
+  try {
+    await AsyncStorage.setItem('@token_key', value)
+    console.log('this is token: ', value)
+  } catch (e) {
+    // saving error
+  }
+}
+// storeData("limam")
 export default function LoginComponent(props) {
 
   const [phoneNumber, setPhoneNumber] = useState('')
@@ -24,9 +28,13 @@ export default function LoginComponent(props) {
   const [loginErrorMessage, setLoginErrorMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [ globalError, setGlobalError ] = useState('')
-
+  const {setCurrentUser} = useAppContext();
+  const {setToken} = useAppContext();
 
   // ++++++++++++++++++++++ login Handle +++++++++++++++++++++++++++++++++++++
+
+
+  //+++++++++
   const handelLoginBtn = () => {
     setIsLoading(true)
     checkPhone(phoneNumber)
@@ -43,21 +51,26 @@ export default function LoginComponent(props) {
         body: raw,
         redirect: 'follow'
       };
-      fetch("http://catalogue.cubesolutions.tn:5112/api/v1/users/login", requestOptions)
+      fetch(`${api.url}users/login`, requestOptions)
         .then(response => response.json())
         .then(result => {
           setIsLoading(false);
           console.log(result)
           if (result.token){
-            alert(result.token)
+            // alert(result.token)
+            // storeData(result.token)
+            setToken(result.token)
+            props.navigation.navigate('Home')
           }
           else if (result.message){
             setGlobalError(result.message)
+            setIsLoading(false)
           }
         })
         .catch(error => {
           console.log('error', error)
           setGlobalError('error with the server')
+          setIsLoading(false)
         });
     }
     else setIsLoading(false)

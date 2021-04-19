@@ -13,14 +13,16 @@
    StatusBar,
    StyleSheet,
    SafeAreaView,
+   LogBox,
  } from 'react-native';
  import {QueryClient, QueryClientProvider} from 'react-query';
  import theme from './src/constants/theme';
  import AppNavigator from './src/navigation/AppNavigator';;
  import Styles from './src/constants/Styles';
+ import {AppContextProvider, useAppContext} from './src/context/AppContext';
 
-//  console.disableYellowBox = true;
-
+  //console.disableYellowBox = true;
+// LogBox.ignoreAllLogs()
 
  export const queryClient = new QueryClient();
  const App = () => {
@@ -30,6 +32,7 @@
      
        <QueryClientProvider client={queryClient}>
          <SafeAreaView style={{flex: 1}}>
+         <AppContextProvider>
            <FlashMessage
              position="top"
              duration={3000}
@@ -39,6 +42,7 @@
            />
            
            <AppNavigator />
+           </AppContextProvider>
          </SafeAreaView>
        </QueryClientProvider>
 

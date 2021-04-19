@@ -8,6 +8,7 @@ import IconButton from './IconButton'
 import { Images } from '../constants/Images'
 import { Colors } from '../constants/Colors';
 import TextButton from './TextButton';
+import { api } from '../constants/api_config';
 
 export default function ValidationComponent(props) {
 
@@ -29,7 +30,7 @@ export default function ValidationComponent(props) {
                 redirect: 'follow'
             };
 
-            fetch("http://catalogue.cubesolutions.tn:5112/api/v1/users/codeVerification", requestOptions)
+            fetch(`${api.url}users/codeVerification`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
                     console.log(result)

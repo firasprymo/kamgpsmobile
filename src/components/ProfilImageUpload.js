@@ -11,8 +11,8 @@ const ProfilImageUpload = props => {
       <Image
         style={{
           borderRadius: (Dimensions.get('window').height * 0.3) / 2,
-          height: scale(100),
-          width: scale(100),
+          height: scale(95),
+          width: scale(95),
         }}
         source={props.source}
       />

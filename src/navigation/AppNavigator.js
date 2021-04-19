@@ -23,11 +23,12 @@ import Payment from '../pages/Payment';
 import EditPlace from '../pages/EditPlace';
 import SelectPlace from '../pages/SelectPlace';
 import ResetPassword from '../pages/ResetPassword';
+import { useAppContext } from '../context/AppContext';
+
 // import {
 //   AnimationType,
 //   getAnimatingBottomBar,
 // } from 'react-native-animating-bottom-tab-bar';
-
 
 
 

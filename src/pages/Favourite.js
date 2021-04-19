@@ -1,19 +1,64 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Col, Row, Tab, TabHeading, Tabs, Text } from 'native-base';
-import React, { useState } from 'react';
-import { Image, StyleSheet, Dimensions, View, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Image, StyleSheet, Dimensions, View, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
 import { scale } from 'react-native-size-matters';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import FavouriteComponent from '../components/FavouriteComponent';
 import FriendsComponent from '../components/FriendsComponent';
+import { api } from '../constants/api_config';
 import { Colors } from '../constants/Colors';
 import { Images } from '../constants/Images';
+import { useAppContext } from '../context/AppContext';
 
-
-
+const wait = (timeout) => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+}
 
 export default function Favourite(props) {
+
+
+  const { token } = useAppContext()
   const [currentTab, setCurrentTab] = useState(true)
+  const [user, setUser] = useState({ username:'', photo:'' })
+  const [refreshing, setRefreshing] = React.useState(false);
+  
+  const refreshdata= () => {
+    
+      var myHeaders = new Headers();
+    myHeaders.append("Authorization", `Bearer ${token}`);
+
+    var raw = "";
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+    fetch(`${api.url}users/me`, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result)
+        if (result.status=='success'){
+          console.log(result.data.data.name)
+          setUser({
+            username: result.data.data.name,
+            photo: result.data.data.photo
+          })
+        }
+      })
+      .catch(error => console.log('error', error));
+  
+}
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    refreshdata()
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
   var tab1Color = Colors.grey1
   var tab2Color = Colors.grey1
   if (currentTab) {
@@ -27,10 +72,23 @@ export default function Favourite(props) {
     tab2Color = Colors.grey1;
   }
 
+    
+  if (user.username=='') {
+    
+   
+    refreshdata()}
+ 
 
 
   return (
     <View style={styles.container}>
+      <ScrollView contentContainerStyle={{marginBottom:scale(-270)}}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh} />}
+       >
+         <View >
       <View style={{
         flexDirection: 'row',
         width: width,
@@ -70,20 +128,25 @@ export default function Favourite(props) {
       <View style={styles.imageContainer}>
         <Image
           style={styles.image}
-          source={Images.user3}
+          source={{uri: `${api.url_photo}${user.photo}`}}
         />
       </View>
       <Text style={styles.nameText}>
-        Olivia Watson
+        {user.username}
       </Text>
-      <Row
-        size={0.15}
+      </View>
+      </ScrollView>
+      <View
         style={{
-          marginTop: scale(20),
+          marginTop: scale(-130),
           borderBottomWidth: 1,
-          borderBottomColor: Colors.yellow
+          borderBottomColor: Colors.yellow,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          paddingHorizontal: scale(40),
+          padding:scale(5),
         }}>
-        <Col style={{ alignItems: 'center' }}>
+        <View style={{ alignItems: 'center' }}>
           <Text style={{
             color: Colors.tabColor,
             fontWeight: 'bold',
@@ -101,8 +164,8 @@ export default function Favourite(props) {
               Friends
                 </Text>
           </View>
-        </Col>
-        <Col style={{ alignItems: 'center' }}>
+        </View>
+        <View style={{ alignItems: 'center' }}>
           <Text style={{
             color: Colors.tabColor,
             fontWeight: 'bold',
@@ -120,8 +183,8 @@ export default function Favourite(props) {
               Favourites
                 </Text>
           </View>
-        </Col>
-      </Row>
+        </View>
+      </View>
       <Row>
 
         <Tabs onChangeTab={() => {

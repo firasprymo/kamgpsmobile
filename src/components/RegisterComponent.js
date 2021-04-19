@@ -1,6 +1,6 @@
 import { Text } from 'native-base';
-import React, { useState } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, Platform, StyleSheet, View } from 'react-native';
 import { scale } from 'react-native-size-matters';
 import { Colors } from '../constants/Colors';
 import MainButton from './MainButton'
@@ -11,9 +11,27 @@ import IconButton from './IconButton';
 import { Images } from '../constants/Images';
 import { launchImageLibrary } from 'react-native-image-picker';
 import ValidationComponent from './ValidationComponent';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { api } from '../constants/api_config';
+import { useAppContext } from '../context/AppContext';
+
+// const getToken = async (function1) => {
+//   try {
+//     const value = await AsyncStorage.getItem('@token_key')
+//     if(value !== null) {
+//       // value previously stored
+//       function1(value)
+//       return value.toString()
+//     }
+//   } catch(e) {
+//     // error reading value
+//   }
+// }
+
 
 export default function RegisterComponent(props) {
 
+  // const [ token, setToken ] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [ errorFromServer, setErrorFromServer ] = useState('')
   const [codeInput, setCodeInput] = useState(false)
@@ -30,10 +48,20 @@ export default function RegisterComponent(props) {
   const [repassword, setRepassword] = useState('')
   const [repasswordErrorMessage, setRepasswordErrorMessage] = useState('')
   const [file, setFile] = useState({
-    filePath: '',
-    fileData: '',
-    fileUri: '',
+    fileName: '',
+    uri: '',
+    type: '',
   })
+
+ 
+
+  // useEffect(()=>{
+  //   getToken((value)=> {
+  //     setToken(value)
+  //   })
+  // },[])
+ 
+  
 
   const launchImageLibraryFunction = () => {
     let options = {
@@ -55,11 +83,7 @@ export default function RegisterComponent(props) {
       } else {
         const source = { uri: response.uri };
         console.log('response', JSON.stringify(response));
-        setFile({
-          filePath: response,
-          fileData: response.data,
-          fileUri: response.uri
-        });
+        setFile(response);
       }
     });
 
@@ -82,23 +106,27 @@ export default function RegisterComponent(props) {
       var myHeaders = new Headers();
 myHeaders.append("Content-Type", "application/json");
 
-var raw = JSON.stringify({
-  "email":email,
-  "name":username,
-  "password":password,
-  "role":"admin",
-  "passwordConfirm":repassword,
-  "phonenumber":phoneNumber,
-  "address":address});
+var formdata = new FormData();
+formdata.append("email", email);
+formdata.append("phonenumber", phoneNumber);
+formdata.append("name", username);
+formdata.append("address", address);
+formdata.append("password", password);
+formdata.append("passwordConfirm", repassword);
+if ( file.uri != '' ) {formdata.append("file", {
+  name: file.fileName,
+  type: file.type,
+  uri:
+    Platform.OS === "android" ? file.uri : file.uri.replace("file://", "")
+});}
 
 var requestOptions = {
   method: 'POST',
-  headers: myHeaders,
-  body: raw,
+  body: formdata,
   redirect: 'follow'
 };
-
-  fetch("http://catalogue.cubesolutions.tn:5112/api/v1/users/signup", requestOptions)
+ 
+  fetch(`${api.url}users/signup`, requestOptions)
   .then(response => response.json())
   .then(result => {
     setIsLoading(false)
@@ -116,7 +144,9 @@ var requestOptions = {
     
   })
   .catch(error => {
-    // console.log('error', error)
+     console.log('error', error)
+     setErrorFromServer('Server error')
+     setIsLoading(false)
   });
     }
     else {
@@ -185,8 +215,8 @@ var requestOptions = {
       setPasswordErrorMessage("This field is required")
       return false
     }
-    else if (password.length < 4) {
-      setPasswordErrorMessage('4 charateres minimum')
+    else if (password.length < 8) {
+      setPasswordErrorMessage('8 charateres minimum')
       return false
     }
     else {
@@ -222,7 +252,7 @@ var requestOptions = {
           
           <ProfilImageUpload
             onPress={() => { launchImageLibraryFunction() }}
-            source={file.fileUri != '' ? { uri: file.fileUri } : null} />
+            source={file.uri != '' ? { uri: file.uri } : null} />
             <Text style={{ color: Colors.red, marginTop: scale(20) }}>{errorFromServer}</Text>
           <Input
             placeholder='username'
