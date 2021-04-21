@@ -7,13 +7,25 @@ import { Images } from '../constants/Images'
 import { Text } from 'native-base';
 import * as Animatable from 'react-native-animatable';
 import { Colors } from '../constants/Colors';
+import { useAppContext } from '../context/AppContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
 
 export default function WelcomPage(props) {
+  const {setToken} = useAppContext();
   React.useEffect(() => {
-    setTimeout(() => props.navigation.navigate('Introduction'), 2000);
+    setTimeout(() => {
+      AsyncStorage.getItem('token').then((token) => {
+        if (token) {
+          
+          props.navigation.navigate('Home');
+        } else {
+          props.navigation.navigate('Auth');
+        }
+      });
+    } , 2000);
   }, []);
   return (
     <ImageBackground style={styles.background} source={Images.welcomeBackground}>

@@ -1,5 +1,5 @@
 import { Col, Row, Tab, TabHeading, Tabs, Text } from 'native-base';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, Dimensions, View, TouchableOpacity, Modal, TextInput, Switch } from 'react-native';
 import { scale } from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather'
@@ -7,13 +7,50 @@ import { Colors } from '../constants/Colors';
 import { Images } from '../constants/Images';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import { api } from '../constants/api_config';
+import { useAppContext } from '../context/AppContext';
 //import Ionicons from 'react-native-vector-icons/Ionicons'
 
-
+const types = ['','walking','driving','bicycling']
 
 export default function DirectionInfo(props) {
-
+    const { token } = useAppContext()
     const [directionType, setDirectionType] = useState('1')
+    const [ directionValues, setDirectionsValues ] = useState({
+        distance:'',
+        duration: '',
+    })
+    useEffect(() => {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", `Bearer ${token}`);
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({
+            "lats": props.from.latitude,
+            "lngs": props.from.longitude,
+            "latd": props.to.latitude,
+            "lngd":  props.to.longitude,
+            "travelMode": types[directionType]
+        });
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+
+        fetch(`${api.url}maps/typeTravelMode`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                console.log(result)
+                setDirectionsValues({
+                    distance: result.data.distance.replace('mi','miles'),
+                    duration: result.data.duration,
+                })
+            } )
+            .catch(error => console.log('error', error));
+    }, [props.to,directionType])
 
     if (props.visible != true) return null
     else return (
@@ -111,15 +148,14 @@ export default function DirectionInfo(props) {
                         alignSelf: 'center',
                         fontWeight: 'bold'
                     }}>
-                        Adress: {" "}
+                        Address: {" "}
                         <Text
                             style={{
                                 fontSize: scale(12),
                                 fontWeight: 'normal',
                                 color: Colors.grey1
                             }}>
-                            Lorem Ipsum is simply a dummy text
-                            of the printing and typesetting industry
+                            {props.to.address}
                         </Text>
                     </Text>
 
@@ -186,37 +222,23 @@ export default function DirectionInfo(props) {
                 <View style={{
                     flexDirection: 'column',
                     alignItems: 'center',
-                    padding: scale(10)
-                }}>
-                    <Text style={{
-                        color: Colors.grey1,
-                        fontSize: scale(18)
-                    }}>Min</Text>
-                    <Text style={{
-                        color: Colors.grey1,
-                        fontSize: scale(18)
-                    }}>
-                        30
-                                        </Text>
-                </View>
-                <View style={{
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    padding: scale(10)
+                    padding: scale(10),
+                    justifyContent: 'center'
                 }}>
                     <Text style={{
                         color: Colors.grey1,
                         fontSize: scale(18)
                     }}>
-                        Km
-                                        </Text>
-                    <Text style={{
-                        color: Colors.grey1,
-                        fontSize: scale(18)
-                    }}>
-                        5.3
+                        {directionValues.distance}
                                     </Text>
+                    <Text style={{
+                        color: Colors.grey1,
+                        fontSize: scale(18)
+                    }}>
+                        {directionValues.duration}
+                                        </Text>
                 </View>
+                
             </View>
         </View>
     )

@@ -38,7 +38,7 @@ export default function EditProfil(props) {
   })
   const [photoChanged, setPhotoChanged] = useState(false)
 
-
+  console.log(token)
 
   useEffect(() => {
     var myHeaders = new Headers();

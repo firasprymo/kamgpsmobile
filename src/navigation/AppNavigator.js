@@ -176,7 +176,7 @@ const appNavigator = createAnimatedSwitchNavigator(
     Home: homeStack,
   },
   {
-    initialRouteName: 'Auth',
+    initialRouteName: 'Welcome',
     transition: (
       <Transition.Together>
         <Transition.In type="fade" durationMs={500} />

@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Col, Row, Tab, TabHeading, Tabs, Text } from 'native-base';
+import { DefaultTabBar, Row, Tab, TabHeading, Tabs, Text } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, Dimensions, View, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
 import { scale } from 'react-native-size-matters';
@@ -12,6 +12,11 @@ import { Colors } from '../constants/Colors';
 import { Images } from '../constants/Images';
 import { useAppContext } from '../context/AppContext';
 
+
+const renderTabBar = (props) => {
+  props.tabStyle = Object.create(props.tabStyle);
+  return <DefaultTabBar {...props} />;
+};
 const wait = (timeout) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
 }
@@ -72,11 +77,13 @@ export default function Favourite(props) {
     tab2Color = Colors.grey1;
   }
 
-    
-  if (user.username=='') {
+  useEffect(()=>{
+    if (user.username=='') {
     
    
-    refreshdata()}
+      refreshdata()}
+  },[])    
+  
  
 
 
@@ -187,16 +194,19 @@ export default function Favourite(props) {
       </View>
       <Row>
 
-        <Tabs onChangeTab={() => {
+        <Tabs 
+        renderTabBar={renderTabBar}
+        onChangeTab={() => {
           setCurrentTab(!currentTab)
         }}
-          tabBarUnderlineStyle={{
-            backgroundColor: Colors.tabColor,
-            width: scale(130),
-            marginHorizontal: scale(25),
-            borderRadius: scale(100)
-          }} >
+        tabBarUnderlineStyle={{
+          backgroundColor: Colors.tabColor,
+          width: scale(130),
+          marginHorizontal: scale(25),
+          borderRadius: scale(100)
+        }} >
           <Tab
+          
             heading={<TabHeading style={{ backgroundColor: 'white' }}>
               <Ionicons name="heart-outline" color={tab1Color} size={20} />
               <Text style={{
@@ -205,7 +215,7 @@ export default function Favourite(props) {
               }} >
                 Favourites
               </Text>
-            </TabHeading>} >
+            </TabHeading>}>
             <FavouriteComponent />
           </Tab>
           <Tab

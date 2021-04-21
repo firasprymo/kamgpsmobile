@@ -40,5 +40,6 @@ export const Images = {
     hospital1: require('../assets/background/hospital1.jpeg'),
     hospital2: require('../assets/background/hospital2.jpg'),
     emptyprofil: require('../assets/background/emptyprofil.png'),
+    myplace: require('../assets/background/myplace.png'),
   };
   
