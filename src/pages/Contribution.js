@@ -10,8 +10,24 @@ export default function Contribution(props) {
 
   return (
     <View style={styles.container} >
-
       <View style={{
+          flexDirection: 'row',
+          width: width,
+          justifyContent: 'center',
+          marginTop: scale(10),
+          paddingBottom: scale(10),
+          borderBottomColor:Colors.grey4,
+          borderBottomWidth: 0.2,
+          }}>
+        <Text style={{
+          fontFamily: "EpoqueSeria-BoldItalic",
+          fontSize: scale(25),
+          color: Colors.backgroundColor1
+        }}>
+          Contribution
+              </Text>
+      </View>
+      {/* <View style={{
         width: width, height: scale(50), flexDirection: 'row',
         justifyContent: 'center', alignItems: 'center',
         marginTop: scale(10)
@@ -38,8 +54,7 @@ export default function Contribution(props) {
           </TouchableOpacity>
 
         </View>
-      </View>
-
+      </View> */}
       <TouchableOpacity
         onPress={() => props.navigation.navigate('EditCard')}
         style={{

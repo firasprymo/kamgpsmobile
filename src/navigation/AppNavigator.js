@@ -61,7 +61,7 @@ const contributionStack = createStackNavigator({
   },
 })
 const favouriteStack = createStackNavigator({
-  Favourite: {
+  Profil: {
     screen: Favourite,
     navigationOptions: navOptionsHandler,
   },
@@ -101,7 +101,7 @@ const homeStack = createBottomTabNavigator({
     screen: Maps,
     navigationOptions: navOptionsHandler,
   },
-  Favourite: {
+  Profil: {
     screen: favouriteStack,
     navigationOptions: navOptionsHandler,
   },
@@ -124,8 +124,8 @@ const homeStack = createBottomTabNavigator({
           : <Image source={Images.mapTabIcon1} />);
       } else if (routeName === 'Notification') {
         iconName = focused ? 'bell-ring-outline' : 'bell-ring-outline';
-      } else if (routeName === 'Favourite') {
-        iconName = focused ? 'heart-outline' : 'heart-outline';
+      } else if (routeName === 'Profil') {
+        iconName = focused ? 'account-heart-outline' : 'account-heart-outline';
       } else if (routeName === 'Contribution') {
         return(  focused ? 
           <IconAnt size={25} color={Colors.tabColor} name='addusergroup'/> :

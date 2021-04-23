@@ -14,21 +14,28 @@ import { Colors } from '../constants/Colors';
 import { Images } from '../constants/Images';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import DirectionInfo from '../components/DirectionInfo';
 import SendPosition from '../components/SendPosition';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapViewDirections from 'react-native-maps-directions';
 
-const apiKey = 'AIzaSyAu36aMMdQo_LbFdwNA50L9GzPpowXxMMQ'
-const My_apiKey = 'AIzaSyBYlvG5jLKDG7LPwLr_ufTxomnx-MCIrHc'
+const apiKey = 'AIzaSyDfxAFFp8jEZrtWFxr8FTieAsUAlQhFhAs'
 Geocoder.init(apiKey);
-
+const types = ['', 'WALKING', 'DRIVING', 'CountryBICYCLING']
 
 export default function Maps(props) {
 
-
+  const [searchType, setSearchType] = useState(true)
+  const [directionValues, setDirectionsValues] = useState({
+    distance: '',
+    duration: [],
+  })
+  const [ searchInput, setSearchInput ] = useState('')
+  const [directionType, setDirectionType] = useState('1')
   const mapRef = React.createRef()
   const [directionVisible, setDirectionVisible] = useState(false);
+  const [ itineraireVisible, setItineraireVisible ] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [marker, setMarker] = useState(false)
   const [userLocation, setUserLocation] = useState({
@@ -38,6 +45,8 @@ export default function Maps(props) {
   const [markedLocation, setMarkedLocation] = useState({
     longitude: 0,
     latitude: 0,
+    address: '',
+    photoRef: '',
   })
   const [region, setRegion] = useState({
     longitude: 0,
@@ -50,13 +59,14 @@ export default function Maps(props) {
       timeout: 15000,
     })
       .then(location => {
-        console.log(location);
+        //console.log(location);
         setUserLocation(location)
         setRegion(location)
       })
       .catch(error => {
         const { code, message } = error;
-        console.warn(code, message);
+        //console.warn(code, message);
+        alert('activate your GPS for user experience')
       })
   }, [])
 
@@ -64,19 +74,22 @@ export default function Maps(props) {
   const GooglePlacesInput = () => {
     return (
       <GooglePlacesAutocomplete
-
-        placeholder='Search'
+        fetchDetails
+        placeholder='Search address'
         onPress={(data, details = null) => {
-
+           console.log('data = ', data.structured_formatting.main_text)
+          // console.log('details = ', details)
           Geocoder.from(data.description)
             .then(json => {
               var location = json.results[0].geometry.location;
-              console.log("location = ", location);
+              // console.log("location = ", location);
               setMarker(true)
               setMarkedLocation({
                 latitude: location.lat,
                 longitude: location.lng,
                 address: data.description,
+                photoRef: details.photos!=undefined ? details.photos[0].photo_reference : '',
+                name: data.structured_formatting.main_text,
               })
               setRegion({
                 latitude: location.lat,
@@ -97,7 +110,10 @@ export default function Maps(props) {
       />
     );
   };
-
+  
+  const toggleItineraire = () => {
+    setItineraireVisible(!itineraireVisible)
+  }
 
   return (
     <View style={styles.mapcontainer}>
@@ -116,13 +132,36 @@ export default function Maps(props) {
         }}
 
         showUserLocation={true} >
-          {directionVisible && <MapViewDirections
-    origin={userLocation}
-    destination={markedLocation}
-    apikey={apiKey}
-    strokeWidth={4}
-    strokeColor='#2ad41e'
-  />}
+        
+          <MapViewDirections
+            mode={types[directionType]}
+            origin={userLocation}
+            destination={markedLocation}
+            apikey={apiKey}
+            strokeWidth={ itineraireVisible ? 4 : 0}
+            strokeColor='#2ad41e'
+            onReady={result => {
+              setDirectionsValues({
+                distance: result.distance.toFixed(2),
+                duration: [
+                  Math.trunc(result.duration / 1440),
+                  Math.trunc((result.duration % 1440) / 60),
+                  (result.duration % 60).toFixed(0)
+                    ]
+              })
+              try {
+                mapRef.current.fitToCoordinates(result.coordinates, {
+                  edgePadding: {
+                    right: (width / 20),
+                    bottom: (height / 20),
+                    left: (width / 20),
+                    top: (height / 20),
+                  }
+                });
+              }
+              catch { error => console.log(error) }
+            }}
+          />
         {marker && <Marker coordinate={{
           latitude: markedLocation.latitude,
           longitude: markedLocation.longitude,
@@ -144,34 +183,47 @@ export default function Maps(props) {
 
       </MapView>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.imageContainer}>
-          <Image
-            style={styles.image}
-            source={Images.user3}
-          />
+        <TouchableOpacity
+          onPress={() => setSearchType(!searchType)}
+          style={styles.imageContainer}
+        >
+          {searchType && <FontAwesome5 name='map-signs' size={scale(18)} color={Colors.grey2} />}
+          {!searchType && <FontAwesome5 name='user-friends' size={scale(18)} color={Colors.grey2} />}
         </TouchableOpacity>
         <View style={styles.search} >
-          {/* <TextInput
-            selectionColor={Colors.purple}
-            style={{
-              flex: 0.9,
-              marginLeft: scale(10)
-            }} />
-          <TouchableOpacity>
-            <AntDesign name='search1' size={25} color={Colors.grey2} />
-          </TouchableOpacity> */}
-          <GooglePlacesInput />
+          {!searchType && <View style={{
+            backgroundColor: 'white', flex: 1,
+            flexDirection: 'row',
+            height: scale(40),
+            borderRadius: scale(5),
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingHorizontal: scale(2)
+          }}>
+            <TextInput
+              value={searchInput}
+              onChangeText={setSearchInput}
+              placeholder="Search friends"
+              selectionColor={Colors.purple}
+              style={{
+                fontSize: scale(14),
+                flex: 0.9,
+                marginLeft: scale(5)
+              }} />
+            <TouchableOpacity style={{
+              marginRight: scale(2),
+              flex: 0.2,
+              height: scale(30),
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}>
+              <AntDesign name='search1' size={25} color={Colors.grey2} />
+            </TouchableOpacity>
+          </View>}
+          {searchType && <GooglePlacesInput />}
         </View>
       </View>
 
-      {/* ++++++++++++++++++++++++++++ this is only for debugging !! +++++++++++++++++++++++++++ */}
-      {/* <TouchableOpacity
-        onPress={() => setDirectionVisible(true)}
-        style={{ backgroundColor: 'aqua', padding: scale(10), borderRadius: 50 }}>
-        <Text>Show component</Text>
-      </TouchableOpacity> */}
-
-      {/* ++++++++++++++++++++++++++++ this is only for debugging !! +++++++++++++++++++++++++++ */}
 
       <View style={{
         alignSelf: 'flex-end',
@@ -196,12 +248,26 @@ export default function Maps(props) {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            setRegion({
-              latitude: userLocation.latitude,
-              longitude: userLocation.longitude,
-              latitudeDelta: 0.015,
-              longitudeDelta: 0.0121,
+            GetLocation.getCurrentPosition({
+              enableHighAccuracy: true,
+              timeout: 15000,
             })
+              .then(location => {
+                //console.log(location);
+                setUserLocation(location)
+                setRegion(location)
+              })
+              .catch(error => {
+                const { code, message } = error;
+                //console.warn(code, message);
+                alert('activate your GPS for user experience')
+              })
+            // setRegion({
+            //   latitude: userLocation.latitude,
+            //   longitude: userLocation.longitude,
+            //   latitudeDelta: 0.015,
+            //   longitudeDelta: 0.0121,
+            // })
           }}
           style={{
             width: scale(50),
@@ -215,12 +281,18 @@ export default function Maps(props) {
             color={directionVisible ? Colors.tabColor : Colors.grey1} />
         </TouchableOpacity>
       </View>
-      <DirectionInfo
+      { directionVisible && 
+        <DirectionInfo
+        type="location"
+        toggleItineraire={toggleItineraire}
         from={userLocation}
         to={markedLocation}
         close={() => setDirectionVisible(false)}
         visible={directionVisible}
-      />
+        directionType={directionType}
+        setDirectionType={setDirectionType}
+        directionValues={directionValues}
+      />}
       <Modal
         animationType="slide"
         transparent={true}
@@ -257,12 +329,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   imageContainer: {
-    height: scale(44),
+    height: scale(40),
     width: scale(40),
     borderRadius: (Dimensions.get('window').height * 0.3) / 2,
     alignItems: 'center',
+    justifyContent: 'center',
     marginHorizontal: 5,
     elevation: 10,
+    backgroundColor: 'white',
   },
   image: {
     borderRadius: (Dimensions.get('window').height * 0.3) / 2,
@@ -282,8 +356,10 @@ const styles = StyleSheet.create({
     top: scale(0),
   },
   search: {
-    backgroundColor: null, flex: 0.9,
+    flex: 0.9,
     flexDirection: 'row',
-    height: scale(200)
+    height: scale(200),
+    borderRadius: scale(5),
+
   },
 })

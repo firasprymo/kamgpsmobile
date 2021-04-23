@@ -11,6 +11,7 @@ import { api } from '../constants/api_config';
 import { Colors } from '../constants/Colors';
 import { Images } from '../constants/Images';
 import { useAppContext } from '../context/AppContext';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 
 const renderTabBar = (props) => {
@@ -23,12 +24,19 @@ const wait = (timeout) => {
 
 export default function Favourite(props) {
 
-
-  const { token } = useAppContext()
+  const [ menu, setMenu ] = useState(false)
+  const { token, setToken } = useAppContext()
   const [currentTab, setCurrentTab] = useState(true)
   const [user, setUser] = useState({ username:'', photo:'' })
   const [refreshing, setRefreshing] = React.useState(false);
   
+  const logout = () => {
+    console.log('logout token = ', token)
+    AsyncStorage.clear();
+    setToken('')
+    props.navigation.navigate('Auth')
+    
+  }
   const refreshdata= () => {
     
       var myHeaders = new Headers();
@@ -42,12 +50,12 @@ export default function Favourite(props) {
       body: raw,
       redirect: 'follow'
     };
-    fetch(`${api.url}users/me`, requestOptions)
+    fetch(`${api.url}users/Me`, requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result)
         if (result.status=='success'){
-          console.log(result.data.data.name)
+          console.log(result)
           setUser({
             username: result.data.data.name,
             photo: result.data.data.photo
@@ -112,7 +120,62 @@ export default function Favourite(props) {
           right: scale(0),
           paddingHorizontal: scale(5)
         }}>
-          <TouchableOpacity
+          {/* <DropDownPicker
+          arrowStyle={{backgroundColor:null, height: scale(30), alignSelf:'center'}}
+          placeholder=''
+          customArrowUp={()=><SimpleLineIcons name='settings' size={30} color={Colors.tabColor}/>}
+          customArrowDown={()=><SimpleLineIcons name='settings' size={30} color={Colors.tabColor}/>}
+          showArrow={true}
+    items={[
+        {label: '', value: 'pencil', icon: () => 
+          <View style={{flexDirection:'row', alignItems:'center'}}>
+          <SimpleLineIcons name='pencil' size={20} color={Colors.tabColor}/>
+          <Text style={{fontSize: scale(12)}}>Modifier profil</Text>
+        </View> 
+        },
+        {label: '', value: 'déconnecter', icon: () => 
+        <View style={{flexDirection:'row', alignItems:'center'}}>
+        <SimpleLineIcons name='logout' size={20} color={Colors.tabColor}/>
+        <Text style={{fontSize: scale(12)}}>Déconnecter</Text>
+      </View> 
+      },
+    ]}
+    
+    containerStyle={{height: 40, width: scale(120),borderWidth:0,backgroundColor:null}}
+    style={{backgroundColor: null, borderWidth:0}}
+    itemStyle={{
+        justifyContent: 'flex-start'
+    }}
+    dropDownStyle={{backgroundColor: '#fafafa'}}
+    onChangeItem={item => 
+      {
+        console.log(item)
+      }
+    }
+/> */}
+<View style={{position: 'absolute',flexDirection:'column', alignItems:'flex-end',flex:1, width:scale(100),right:scale(10), top:scale(-10)}}> 
+<TouchableOpacity
+onPress={() => setMenu(!menu)}
+style={{height: 40, width: scale(50),borderWidth:0,backgroundColor:null,alignItems:'center'}} >
+  <SimpleLineIcons name='settings' size={30} color={Colors.tabColor}/>
+</TouchableOpacity>
+ {  menu && <View style={{borderRadius:5,backgroundColor:'white',elevation:5}}>
+<TouchableOpacity 
+  onPress={() => props.navigation.navigate('EditProfil')}
+  style={{height: 40, width: scale(100),flexDirection:'row', alignItems:'center',paddingLeft:scale(3),borderBottomWidth:0.2}}>
+<SimpleLineIcons name='pencil' size={20} color={Colors.tabColor}/>
+          <Text style={{fontSize: scale(11),marginHorizontal:scale(5)}}>Modifier profil</Text>
+</TouchableOpacity>
+
+<TouchableOpacity
+onPress={() => logout()}
+style={{height: 40, width: scale(100),flexDirection:'row', alignItems:'center',paddingLeft:scale(3)}}>
+<SimpleLineIcons name='logout' size={20} color={Colors.tabColor}/>
+        <Text style={{fontSize: scale(11),marginHorizontal:scale(5)}}>Déconnecter</Text>
+</TouchableOpacity>
+</View>}
+</View>
+          {/* <TouchableOpacity
             onPress={() => props.navigation.navigate('EditProfil')}
             style={{
               alignItems: 'center',
@@ -128,14 +191,14 @@ export default function Favourite(props) {
             }} >
               Modifier profil
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
 
       <View style={styles.imageContainer}>
         <Image
           style={styles.image}
-          source={{uri: `${api.url_photo}${user.photo}`}}
+          source={{uri: `${api.url_photo}User/${user.photo}`}}
         />
       </View>
       <Text style={styles.nameText}>

@@ -17,15 +17,17 @@ import LoginComponent from '../components/LoginComponent';
 import RegisterComponent from '../components/RegisterComponent';
 import { Button, Content } from 'native-base';
 
-export default function LoginPage(props) {
 
+export default function LoginPage(props) {
     const [currentTab, setCurrentTab] = useState('login')
     return (
         <ImageBackground resizeMode='stretch' source={Images.loginBackground} style={styles.background}>
                 <StatusBar hidden={true} />
                     <ScrollView style={{width: width}}  >
+                        
                     {currentTab == 'login' ? <LoginComponent navigation={props.navigation} /> : <RegisterComponent setCurrentTab = {setCurrentTab}  />}
                     <View style={{height:scale(150),width:scale(20)}} />
+                    
                     </ScrollView>
             
             <View style={{width: width, flexDirection:'row', justifyContent: 'space-between'}}>

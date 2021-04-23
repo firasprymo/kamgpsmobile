@@ -15,10 +15,16 @@ import ProfilImageUpload from '../components/ProfilImageUpload';
 import MainButton from '../components/MainButton'
 import Input from '../components/Input';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import GetLocation from 'react-native-get-location'
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { useAppContext } from '../context/AppContext';
 import { useEffect } from 'react';
 import { api } from '../constants/api_config';
+import Geocoder from 'react-native-geocoding';
 
+const apiKey = 'AIzaSyDfxAFFp8jEZrtWFxr8FTieAsUAlQhFhAs'
+Geocoder.init(apiKey);
 
 
 export default function EditProfil(props) {
@@ -37,8 +43,49 @@ export default function EditProfil(props) {
     uri: '',
   })
   const [photoChanged, setPhotoChanged] = useState(false)
+  const [userLocation, setUserLocation] = useState({
+    longitude: 0,
+    latitude: 0,
+    address: '',
+  })
+  const [successMessage, setSuccessMessage] = useState('')
 
-  console.log(token)
+
+
+  const getLocation = () => {
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 15000,
+    })
+      .then(location => {
+        // console.log(location);
+        Geocoder.from(location.latitude, location.longitude)
+          .then(json => {
+            console.log(json)
+            var addressComponent = json.results[0].formatted_address;
+            // console.log(addressComponent);
+            setaddressErrorMessage('')
+            setUserLocation({
+              longitude: location.latitude,
+              latitude: location.longitude,
+              address: addressComponent,
+            })
+          })
+          .catch(error => {
+            console.log(error)
+
+          });
+
+      })
+      .catch(error => {
+        const { code, message } = error;
+        console.warn(code, message);
+        // alert("enable your GPS")
+        setaddressErrorMessage('Enable your GPS')
+      })
+  }
+
+
 
   useEffect(() => {
     var myHeaders = new Headers();
@@ -56,15 +103,20 @@ export default function EditProfil(props) {
       .then(result => {
         console.log(result)
         if (result.status == 'success') {
-          console.log(result.data.data.name)
+          console.log(result.data.data)
 
           setUsername(result.data.data.name)
           setEmail(result.data.data.email)
           setAddress(result.data.data.address)
+          setUserLocation({
+            longitude: result.data.data.lat,
+            latitude: result.data.data.lng,
+            address: result.data.data.address,
+          })
           setFile({
             filePath: '',
             type: '',
-            uri: `${api.url_photo}${result.data.data.photo}`,
+            uri: `${api.url_photo}User/${result.data.data.photo}`,
           })
         }
       })
@@ -106,7 +158,7 @@ export default function EditProfil(props) {
   const handelEditBtn = () => {
     let usernameTest = checkUsername(username)
     let emailTest = checkEmail(email)
-    let addressTest = checkAddress(address)
+    let addressTest = checkAddress()
     if (usernameTest && emailTest && addressTest) {
       setIsLoading(true)
       var myHeaders = new Headers();
@@ -115,10 +167,12 @@ export default function EditProfil(props) {
       var formdata = new FormData();
       formdata.append("email", email);
       formdata.append("name", username);
-      formdata.append("address", address);
+      formdata.append("address", userLocation.address);
+      formdata.append("lat", userLocation.latitude);
+      formdata.append("lng", userLocation.longitude);
       if (photoChanged) {
         console.log('this is the uri : ', file.uri)
-        formdata.append("file", {
+        formdata.append("photo", {
           name: file.fileName,
           type: file.type,
           uri:
@@ -136,7 +190,7 @@ export default function EditProfil(props) {
       fetch(`${api.url}users/updateMe`, requestOptions)
         .then(response => response.json())
         .then(result => {
-          console.log(result)
+          setSuccessMessage(true)
           setIsLoading(false)
         })
         .catch(error => {
@@ -175,9 +229,9 @@ export default function EditProfil(props) {
       return true
     }
   }
-  const checkAddress = (address) => {
-    if (address == '') {
-      setaddressErrorMessage("This field is required")
+  const checkAddress = () => {
+    if (userLocation.address == '') {
+      setaddressErrorMessage("Your address is required")
       return false
     }
     else {
@@ -192,7 +246,7 @@ export default function EditProfil(props) {
       source={Images.loginBackground}
       style={styles.background}>
       <TouchableOpacity
-        onPress={() => props.navigation.navigate('Favourite')}
+        onPress={() => props.navigation.navigate('Profil')}
         style={{ padding: scale(5), alignSelf: 'flex-start' }}>
         <AntDesign name='arrowleft' size={30} color='white' />
       </TouchableOpacity>
@@ -223,19 +277,55 @@ export default function EditProfil(props) {
               onChangeText={setEmail}
               style={{ marginTop: scale(5) }}
               errorMessage={emailErrorMessage} />
-            <Input
-              placeholder='address'
-              name='map-marker'
-              value={address}
-              onChangeText={setAddress}
-              style={{ marginTop: scale(5) }}
-              errorMessage={addressErrorMessage} />
+            <View style={[styles.container1, { borderColor: addressErrorMessage == '' ? '#d9d9d9' : Colors.red }]}>
+              <Icon name='map-marker' size={15} color="white" />
+
+
+              {addressErrorMessage == '' ?
+                <Text
+                  style={styles.text1}
+                  selectionColor='white'
+
+                >{userLocation.address}
+                </Text>
+                :
+                <Text style={[styles.text1, { color: Colors.red }]}>{addressErrorMessage}</Text>
+              }
+              <TouchableOpacity
+                onPress={() => getLocation()}
+                style={{
+                  width: scale(60),
+                  height: scale(30),
+                  backgroundColor: null,
+                  borderLeftWidth: 1,
+                  borderColor: '#d9d9d9',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <MaterialCommunityIcons name='map-search-outline' size={scale(22)} color='white' />
+              </TouchableOpacity>
+            </View>
+
             <MainButton
               isLoading={isLoading}
               glowColor={Colors.logoBlue}
               onPress={() => handelEditBtn()}
               title="Modifier"
               style={{ marginTop: scale(5) }} />
+            <View>
+              {successMessage == true && <View style={{ alignItems: 'center' }}>
+                <AntDesign style={{ marginTop: scale(20) }} name='check' color='green' size={scale(60)} />
+                <Text style={{
+                  color: 'white',
+                  fontSize: scale(15),
+
+
+                  marginTop: scale(20),
+                }}>
+                  Updated !
+                        </Text>
+              </View>}
+            </View>
           </>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
@@ -281,5 +371,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  container1: {
+    width: scale(240), height: scale(35), backgroundColor: 'rgba(255, 255, 255,0.08)',
+    borderWidth: 1, borderRadius: scale(7),
+    flexDirection: "row", alignItems: 'center', paddingHorizontal: scale(10),
+    marginBottom: scale(15)
+  },
+  text1: {
+    flex: 1,
+    paddingLeft: scale(10),
+    color: 'white',
+    fontSize: scale(12)
+  }
 })
 

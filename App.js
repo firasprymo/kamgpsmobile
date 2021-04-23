@@ -21,7 +21,7 @@
  import Styles from './src/constants/Styles';
  import {AppContextProvider, useAppContext} from './src/context/AppContext';
 
-  //console.disableYellowBox = true;
+//   console.disableYellowBox = true;
 // LogBox.ignoreAllLogs()
 
  export const queryClient = new QueryClient();

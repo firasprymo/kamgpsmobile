@@ -12,45 +12,23 @@ import { useAppContext } from '../context/AppContext';
 //import Ionicons from 'react-native-vector-icons/Ionicons'
 
 const types = ['','walking','driving','bicycling']
+const apiKey = 'AIzaSyDfxAFFp8jEZrtWFxr8FTieAsUAlQhFhAs'
 
 export default function DirectionInfo(props) {
     const { token } = useAppContext()
-    const [directionType, setDirectionType] = useState('1')
-    const [ directionValues, setDirectionsValues ] = useState({
-        distance:'',
-        duration: '',
-    })
-    useEffect(() => {
-        var myHeaders = new Headers();
-        myHeaders.append("Authorization", `Bearer ${token}`);
-        myHeaders.append("Content-Type", "application/json");
+    const directionType = props.directionType;
+    const setDirectionType = props.setDirectionType;
+    const directionValues = props.directionValues;
+    
+    const emptyphotouri = Image.resolveAssetSource(Images.emptyphoto).uri
+    const image = props.to.photoRef != '' ?
+    {uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${props.to.photoRef}&key=${apiKey}`}
+    : {uri : emptyphotouri}
 
-        var raw = JSON.stringify({
-            "lats": props.from.latitude,
-            "lngs": props.from.longitude,
-            "latd": props.to.latitude,
-            "lngd":  props.to.longitude,
-            "travelMode": types[directionType]
-        });
-
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow'
-        };
-
-        fetch(`${api.url}maps/typeTravelMode`, requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                console.log(result)
-                setDirectionsValues({
-                    distance: result.data.distance.replace('mi','miles'),
-                    duration: result.data.duration,
-                })
-            } )
-            .catch(error => console.log('error', error));
-    }, [props.to,directionType])
+    // useEffect(()=>{
+    //     props.toggleItineraire()
+        
+    // },[])
 
     if (props.visible != true) return null
     else return (
@@ -165,7 +143,9 @@ export default function DirectionInfo(props) {
                     justifyContent: 'space-between',
                     marginTop: scale(10)
                 }}>
-                    <TouchableOpacity style={{
+                    <TouchableOpacity 
+                        onPress={()=> props.toggleItineraire() }
+                        style={{
                         width: scale(100),
                         height: scale(60),
                         flexDirection: 'column',
@@ -216,7 +196,7 @@ export default function DirectionInfo(props) {
                 <View style={styles.imageContainer}>
                     <Image
                         style={styles.image}
-                        source={Images.user3}
+                        source={ image}
                     />
                 </View>
                 <View style={{
@@ -229,13 +209,15 @@ export default function DirectionInfo(props) {
                         color: Colors.grey1,
                         fontSize: scale(18)
                     }}>
-                        {directionValues.distance}
+                        {directionValues.distance} Km
                                     </Text>
                     <Text style={{
                         color: Colors.grey1,
                         fontSize: scale(18)
                     }}>
-                        {directionValues.duration}
+                        {directionValues.duration[0]!=0 && directionValues.duration[0] + ' d ,'}
+                        {directionValues.duration[1]!=0 && directionValues.duration[1] + ' h ,'}
+                        {directionValues.duration[2] && directionValues.duration[2] + ' min '}
                                         </Text>
                 </View>
                 
@@ -275,18 +257,13 @@ const styles = StyleSheet.create({
 
     },
     imageContainer: {
-        height: scale(50),
-        width: scale(50),
-        borderRadius: (Dimensions.get('window').height * 0.3) / 2,
-        alignItems: 'center',
+        
+        borderRadius: (Dimensions.get('window').height * 0.3) / 20,
         margin: 8,
-        elevation: 5,
     },
     image: {
-        borderRadius: (Dimensions.get('window').height * 0.3) / 2,
-        height: scale(50),
-        width: scale(50),
-        borderColor: "white",
-        borderWidth: 0.8,
+        borderRadius: (Dimensions.get('window').height * 0.3) / 20,
+        height: scale(60),
+        width: scale(60),
     },
 })

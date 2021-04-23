@@ -10,17 +10,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { api } from '../constants/api_config';
 import { useAppContext } from '../context/AppContext';
 
-const storeData = async (value) => {
-  try {
-    await AsyncStorage.setItem('@token_key', value)
-    console.log('this is token: ', value)
-  } catch (e) {
-    // saving error
-  }
-}
-// storeData("limam")
+
 export default function LoginComponent(props) {
 
+  const [ countryCode, setCountryCode ] = useState('')    
   const [phoneNumber, setPhoneNumber] = useState('')
   const [phoneErrorMessage, setPhoneErrorMessage] = useState('')
   const [password, setPassword] = useState('')
@@ -43,7 +36,7 @@ export default function LoginComponent(props) {
       var myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
 
-      var raw = JSON.stringify({ "phonenumber": phoneNumber, "password": password });
+      var raw = JSON.stringify({ "phonenumber": countryCode+phoneNumber, "password": password });
 
       var requestOptions = {
         method: 'POST',
@@ -91,6 +84,10 @@ export default function LoginComponent(props) {
       setPhoneErrorMessage('8 digits minimum')
       return false
     }
+    else if (countryCode=='') {
+      setPhoneErrorMessage('Select country code')
+      return false
+    }
     else {
       setPhoneErrorMessage('')
       return true
@@ -125,7 +122,10 @@ export default function LoginComponent(props) {
         onChangeText={setPhoneNumber}
         style={{ marginTop: scale(10) }}
         errorMessage={phoneErrorMessage}
+        countryCode={countryCode}
+        setCountryCode={setCountryCode}
       />
+      
       <Input
         secureTextEntry={true}
         placeholder='password'

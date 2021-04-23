@@ -183,7 +183,7 @@ export default function Notification(props) {
           fontSize: scale(25),
           color: Colors.backgroundColor1
         }}>
-          Lorem Ipsum
+          Notification
               </Text>
       </View>
       <Content>

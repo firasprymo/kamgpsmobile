@@ -24,7 +24,7 @@ export default function Payment(props) {
         <View style={styles.container} >
             <View style={styles.headBar} >
                 <TouchableOpacity
-                    onPress={() => props.navigation.navigate('Favourite')}
+                    onPress={() => props.navigation.navigate('Profil')}
                     style={{ padding: scale(5) }}>
                     <AntDesign name='arrowleft' size={30} color='grey' />
                 </TouchableOpacity>
