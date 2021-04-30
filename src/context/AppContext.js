@@ -6,7 +6,11 @@ const AppContext = React.createContext();
 const AppContextProvider = props => {
   const [currentUser, setCurrentUser] = React.useState(null);
   const [userId, setUserId] = React.useState(props?.userId);
-  const [token, _setToken ] = React.useState('')
+  const [token, _setToken ] = React.useState('');
+  const [ markedPlace, setMarkedPlace] = React.useState({
+    latitude: 0,
+    longitude: 0,
+  })
   useEffect(()=>{
     AsyncStorage.getItem('token').then(token=>{
       if (token) {
@@ -35,7 +39,9 @@ const AppContextProvider = props => {
         currentUser,
         userId,
         token,
-        setToken
+        setToken,
+        markedPlace,
+        setMarkedPlace,
         //countryCodeSim,
       }}>
       {props.children}

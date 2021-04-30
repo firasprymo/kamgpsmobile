@@ -1,6 +1,6 @@
 import React from 'react';
 import {createStackNavigator} from 'react-navigation-stack';
-import {createAppContainer} from 'react-navigation';
+import {createAppContainer, NavigationContext} from 'react-navigation';
 import {Transition} from 'react-native-reanimated';
 import createAnimatedSwitchNavigator from 'react-navigation-animated-switch';
 import {Colors} from '../constants/Colors';
@@ -10,10 +10,10 @@ import IntroductionPage from '../pages/IntroductionPage';
 import LoginPage from '../pages/LoginPage';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Maps from '../pages/Maps';
-import Favourite from '../pages/Favourite';
-import Notification from '../pages/Notification';
+import Proximite from '../pages/Proximite';
 import Contribution from '../pages/Contribution';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
 import IconAnt from 'react-native-vector-icons/AntDesign';
 import { Images } from '../constants/Images';
 import EditCard from '../pages/EditCard';
@@ -24,6 +24,15 @@ import EditPlace from '../pages/EditPlace';
 import SelectPlace from '../pages/SelectPlace';
 import ResetPassword from '../pages/ResetPassword';
 import { useAppContext } from '../context/AppContext';
+import SavePlaceFromMap from '../pages/SavePlaceFromMap';
+import Profil from '../pages/Profil';
+import Position from '../pages/Position';
+import Historique from '../pages/Historique';
+import Notification from '../pages/Notification';
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import VoirTout from '../pages/VoirTout';
+import AddFriend from '../pages/AddFriend';
+import RequestPosition from '../pages/RequestPosition';
 
 // import {
 //   AnimationType,
@@ -60,9 +69,9 @@ const contributionStack = createStackNavigator({
     navigationOptions: navOptionsHandler,
   },
 })
-const favouriteStack = createStackNavigator({
+const profilStack = createStackNavigator({
   Profil: {
-    screen: Favourite,
+    screen: Profil,
     navigationOptions: navOptionsHandler,
   },
   EditProfil: {
@@ -71,6 +80,42 @@ const favouriteStack = createStackNavigator({
   },
   Payment: {
     screen: Payment ,
+    navigationOptions: navOptionsHandler,
+  },
+})
+const mapStack = createStackNavigator({
+  Maps: {
+    screen: Maps,
+    navigationOptions: navOptionsHandler,
+  },
+  Notification: {
+    screen: Notification,
+    navigationOptions: navOptionsHandler,
+  },
+  SavePlace: {
+    screen: SavePlaceFromMap ,
+    navigationOptions: navOptionsHandler,
+  },
+  SelectPlace: {
+    screen: SelectPlace ,
+    navigationOptions: navOptionsHandler,
+  },
+  AddFriend: {
+    screen: AddFriend ,
+    navigationOptions: navOptionsHandler,
+  },
+  RequestPosition: {
+    screen: RequestPosition ,
+    navigationOptions: navOptionsHandler,
+  },
+})
+const proximiteStack = createStackNavigator({
+  Proximite: {
+    screen: Proximite,
+    navigationOptions: navOptionsHandler,
+  },
+  VoirTout: {
+    screen: VoirTout,
     navigationOptions: navOptionsHandler,
   },
 })
@@ -84,33 +129,49 @@ contributionStack.navigationOptions = ({ navigation }) => {
     tabBarVisible,
   };
 };
-favouriteStack.navigationOptions = ({ navigation }) => {
+profilStack.navigationOptions = ({ navigation }) => {
   let tabBarVisible = true;
   if (navigation.state.index > 0) {
     tabBarVisible = false;
   }
-
   return {
     tabBarVisible,
   };
 };
+// mapStack.navigationOptions = ({ navigation }) => {
+//   let tabBarVisible = true;
+//   if (navigation.state.index > 0) {
+//     tabBarVisible = false;
+//   }
+//   return {
+//     tabBarVisible,
+//   };
+// };
 
 const homeStack = createBottomTabNavigator({
   
   Maps: {
-    screen: Maps,
+    screen: mapStack,
+    navigationOptions: navOptionsHandler,
+  },
+  Position: {
+    screen: Position,
     navigationOptions: navOptionsHandler,
   },
   Profil: {
-    screen: favouriteStack,
+    screen: profilStack,
     navigationOptions: navOptionsHandler,
   },
-  Notification: {
-    screen: Notification,
+  Proximité: {
+    screen: proximiteStack,
     navigationOptions: navOptionsHandler,
   },
   Contribution: {
     screen: contributionStack,
+    navigationOptions: navOptionsHandler,
+  },
+  Historique: {
+    screen: Historique,
     navigationOptions: navOptionsHandler,
   },
 },{
@@ -118,18 +179,37 @@ const homeStack = createBottomTabNavigator({
     tabBarIcon: ({ focused, horizontal, tintColor }) => {
       const { routeName } = navigation.state;
       let iconName;
+      
       if (routeName === 'Maps') {
         return( focused
-          ? <Image source={Images.mapTabIcon2} />
+          ? <Image source={Images.mapTabIcon1} style={{tintColor:Colors.tabColor}}/>
           : <Image source={Images.mapTabIcon1} />);
-      } else if (routeName === 'Notification') {
-        iconName = focused ? 'bell-ring-outline' : 'bell-ring-outline';
+      } else if (routeName === 'Proximité') {
+        iconName = focused ? 'map-outline' : 'map-outline';
       } else if (routeName === 'Profil') {
         iconName = focused ? 'account-heart-outline' : 'account-heart-outline';
       } else if (routeName === 'Contribution') {
         return(  focused ? 
           <IconAnt size={25} color={Colors.tabColor} name='addusergroup'/> :
         <IconAnt size={25} color={tintColor} name='addusergroup'/>);
+      }
+      else if(routeName === 'Position') {
+        return( focused
+          ? <FontAwesome
+          name='location-arrow'
+          size={25}
+          color={Colors.tabColor}/>
+          : <FontAwesome
+          name='location-arrow'
+          size={25}
+          color={tintColor} />);
+      }
+      else if(routeName === 'Historique') {
+        return(
+          focused ? 
+          <SimpleLineIcons size={25} color={Colors.tabColor} name='list'/> :
+        <SimpleLineIcons size={25} color={tintColor} name='list'/>
+        )
       }
 
       // You can return any component that you like here!
@@ -140,7 +220,7 @@ const homeStack = createBottomTabNavigator({
     activeTintColor: Colors.tabColor,
     inactiveTintColor: 'gray',
     style: {
-      backgroundColor:Colors.tabsBackground,
+      backgroundColoredr:Colors.tabsBackground,
     }
   },
 }

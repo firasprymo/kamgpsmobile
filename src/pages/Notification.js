@@ -1,175 +1,33 @@
-import React from 'react';
-import {
-  Animated, Image,
-  Dimensions,
-  View, Text, TouchableOpacity,
-  TouchableHighlight
-} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, Image, ScrollView, Text, RefreshControl, TouchableOpacity, View } from 'react-native';
 import { scale } from 'react-native-size-matters';
-import { Images } from '../constants/Images';
-import Carousel from 'react-native-snap-carousel';
-import { useState } from 'react/cjs/react.development';
 import { Colors } from '../constants/Colors';
-import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Content } from 'native-base';
+import AntDesign from 'react-native-vector-icons/AntDesign'
+import { Images } from '../constants/Images';
+import SentLocationRequest from '../components/SentLocationRequest';
+import SentFriendRequest from '../components/SentFriendRequest';
+import RecievedLocationRequest from '../components/RecievedLocationRequest';
+import RecievedFriendRequest from '../components/RecievedFriendRequest';
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
-
+const wait = (timeout) => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+}
 export default function Notification(props) {
 
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [activeCardIndex, setActiveCardIndex] = useState(0)
+  const [ tab, setTab ] = useState('1')
+  const [refreshing, setRefreshing] = React.useState(false);
 
-  const _renderCard = ({ item, index }) => {
-    return (
-      <View
-        style={{
-          borderRadius: scale(5),
-          borderTopRightRadius: scale(12),
-          borderTopLeftRadius: scale(12),
-          backgroundColor: 'white',
-          height: scale(220),
-          width: scale(300),
-          marginLeft: scale(10),
-          marginRight: scale(25),
-          marginBottom: scale(20),
-          elevation: scale(10)
-        }}>
-        <Image source={item.photo} style={{
-          width: scale(300),
-          height: scale(170),
-          borderTopRightRadius: scale(12),
-          borderTopLeftRadius: scale(12),
-        }} />
-        <View style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          paddingHorizontal: scale(10)
-        }}>
-          <View style={{
-            flexDirection: 'row',
-            flex: 2,
-            justifyContent: 'space-between',
-            marginRight: scale(20)
-          }}>
-            <TouchableOpacity
-              onPress={() => alert(item.title)}
-              style={{ margin: scale(5) }}>
-              <Image
-                source={Images.mapTabIcon2}
-                style={{ width: scale(25), height: scale(25) }} />
-            </TouchableOpacity>
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    console.log('refreshing')
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+ 
+    return(
+        <View style={{backgroundColor:'white', flex:1}}>
             <View style={{
-              flexDirection: 'column',
-              alignItems: 'center',
-              padding: scale(2)
-            }}>
-              <Text style={{ color: Colors.tabColor }}>Min</Text>
-              <Text style={{ color: Colors.tabColor }}>
-                {item.duration}
-              </Text>
-            </View>
-            <View style={{
-              flexDirection: 'column',
-              alignItems: 'center',
-              padding: scale(2)
-            }}>
-              <Text style={{ color: Colors.tabColor }}>Km</Text>
-              <Text style={{ color: Colors.tabColor }}>
-                {item.distance}
-              </Text>
-            </View>
-          </View>
-          <View style={{
-            flexDirection: 'column',
-            justifyContent: 'center',
-            marginHorizontal: scale(5)
-          }}>
-            <Text style={{ fontSize: scale(10), fontWeight: 'bold' }}>
-              {item.address}
-            </Text>
-          </View>
-          <TouchableOpacity style={{ marginTop: scale(5) }}>
-            <IconMaterial name='heart-outline' size={scale(25)} />
-          </TouchableOpacity>
-        </View>
-
-
-      </View>
-
-    )
-  }
-  const _renderItem = ({ item, index }) => {
-    if (index !== activeIndex) {
-      return (
-        <TouchableHighlight
-          key={item.id}>
-          <View style={{ flexDirection: 'column' }}>
-            <View style={{
-              width: scale(82),
-              height: scale(132),
-              borderRadius: scale(10),
-              elevation: scale(10),
-            }}>
-              <Image
-                source={item.photo}
-                style={{
-                  width: scale(85),
-                  height: scale(130),
-                  borderRadius: scale(12)
-                }} />
-            </View>
-            <Text style={{
-              color: Colors.grey2,
-              alignSelf: 'center'
-            }}>
-              {item.title}
-            </Text>
-          </View>
-        </TouchableHighlight>
-
-      )
-    }
-    else {
-      return (
-        <TouchableHighlight
-
-          key={item.id}>
-          <View style={{ flexDirection: 'column' }}>
-            <View style={{
-              width: scale(82),
-              height: scale(132),
-              borderRadius: scale(12),
-              elevation: scale(10),
-            }}>
-              <Image
-                source={item.photo}
-                style={{
-                  justifyContent: "flex-end",
-                  width: scale(85),
-                  height: scale(130),
-                  borderRadius: scale(12)
-                }} >
-              </Image>
-              <Text style={{
-                marginTop: scale(-20),
-                color: Colors.white,
-                alignSelf: 'center',
-                fontSize: scale(12),
-                fontWeight: 'bold'
-              }}>
-                {item.title}
-              </Text>
-            </View>
-
-          </View>
-        </TouchableHighlight>
-      )
-    }
-  }
-
-  return (
-    <View style={{ flex: 1, flexDirection: 'column' }}>
-      <View style={{
           flexDirection: 'row',
           width: width,
           justifyContent: 'center',
@@ -178,6 +36,15 @@ export default function Notification(props) {
           borderBottomColor:Colors.grey4,
           borderBottomWidth: 0.2,
           }}>
+              <TouchableOpacity
+                    onPress={() => props.navigation.goBack()}
+                    style={{ padding: scale(5),
+                        position:'absolute',
+                        left:scale(10),
+                        marginTop:scale(-5),
+                     }}>
+                     <AntDesign name='arrowleft' size={30} color='grey' />
+                </TouchableOpacity>
         <Text style={{
           fontFamily: "EpoqueSeria-BoldItalic",
           fontSize: scale(25),
@@ -186,238 +53,169 @@ export default function Notification(props) {
           Notification
               </Text>
       </View>
-      <Content>
-        <Animated.View style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              marginTop: scale(10)
-              }}>
-          <Carousel
-            inactiveSlideScale={0.7}
-            layout={"default"}
-            onSnapToItem={(index) => setActiveIndex(index)}
-            data={fooddata}
-            sliderWidth={scale(355)}
-            itemWidth={scale(90)}
-            renderItem={_renderItem} />
-        </Animated.View>
-        <TouchableOpacity style={{
-            marginTop: scale(0),
-            alignItems: 'center'
-            }}>
-          <Image style={{
-              width: scale(30),
-              height: scale(30)
-              }} 
-              source={Images.mapTabIcon2}
-              />
-        </TouchableOpacity>
-        <Text style={{
-          fontFamily: "EpoqueSeria-BoldItalic",
-          fontSize: scale(25),
-          color: Colors.backgroundColor1,
-          marginLeft: scale(20),
-          marginTop: scale(20)
-        }}>
-          A proximité
-      </Text>
-        <Animated.View style={{
-            flex: 1,
-            flexDirection: 'row',
-            marginTop: scale(20)
-            }}>
-          <Carousel
-            layout={"default"}
-            onSnapToItem={(index) => setActiveCardIndex(index)}
-            data={hospitaldata}
-            sliderWidth={scale(200)}
-            itemWidth={scale(300)}
-            renderItem={_renderCard} />
-        </Animated.View>
-        <Text style={{
-          fontFamily: "EpoqueSeria-BoldItalic",
-          fontSize: scale(25),
-          color: Colors.backgroundColor1,
-          marginLeft: scale(20),
-          marginTop: scale(20)
-        }}>
-          A proximité
-      </Text>
-        <Animated.View style={{
-            flex: 1,
-            flexDirection: 'row',
-            marginTop: scale(20)
-            }}>
-          <Carousel
-            layout={"default"}
-            onSnapToItem={(index) => setActiveCardIndex(index)}
-            data={policedata}
-            sliderWidth={scale(200)}
-            itemWidth={scale(300)}
-            renderItem={_renderCard} />
-        </Animated.View>
-        <Text style={{
-          fontFamily: "EpoqueSeria-BoldItalic",
-          fontSize: scale(25),
-          color: Colors.backgroundColor1,
-          marginLeft: scale(20),
-          marginTop: scale(20)
-        }}>
-          A proximité
-      </Text>
-        <Animated.View style={{
-            flex: 1,
-            flexDirection: 'row',
-            marginTop: scale(20)
-            }}>
-          <Carousel
-            layout={"default"}
-            onSnapToItem={(index) => setActiveCardIndex(index)}
-            data={fooddata}
-            sliderWidth={scale(200)}
-            itemWidth={scale(300)}
-            renderItem={_renderCard} />
-        </Animated.View>
-      </Content>
-    </View>
-  );
+      <View
+        style={{
+          flexDirection:'row',
+          justifyContent:'center',
+          alignItems: 'center',
+          paddingTop: scale(20),
+          paddingBottom: scale(20),
+        }}
+      >
+          <TouchableOpacity
+                        onPress={()=>{setTab('1')}}
+                        style={{
+                            backgroundColor: tab=='1' ? Colors.green2 : 'white',
+                            width: scale(110),
+                            height:scale(30),
+                            justifyContent:'center',
+                            alignItems:'center',
+                            elevation:3
+                        }}>
+                            <Text style={{
+                                        color: tab=='1' ? 'white' : 'grey',
+                                        fontWeight:'bold'
+                                    }}>
+                                Reçu
+                            </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={()=>{setTab('2')}}
+                        style={{
+                            backgroundColor: tab=='2' ? Colors.green2 : 'white',
+                            width: scale(110),
+                            height:scale(30),
+                            justifyContent:'center',
+                            alignItems:'center',
+                            elevation:3
+                        }}>
+                            <Text style={{
+                                        color: tab=='2' ? 'white' : 'grey',
+                                        fontWeight:'bold'
+                                    }}>
+                                Envoyée
+                            </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                    onPress={()=>props.navigation.navigate('RequestPosition')}
+                      style={{
+                        backgroundColor: Colors.logoBlue,
+                        width: scale(35),
+                        height:scale(30),
+                        justifyContent:'center',
+                        alignItems:'center',
+                        elevation:3,
+                        borderRadius: scale(5),
+                        marginLeft:scale(20)
+                    }}>
+                      <FontAwesome
+          name='location-arrow'
+          size={scale(20)}
+          color={Colors.white}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                    onPress={()=>props.navigation.navigate('AddFriend')}
+                      style={{
+                        backgroundColor: Colors.logoBlue,
+                        width: scale(35),
+                        height:scale(30),
+                        justifyContent:'center',
+                        alignItems:'center',
+                        elevation:3,
+                        borderRadius: scale(5),
+                        marginLeft:scale(10)
+                    }}>
+                      <MaterialCommunityIcons name='account-multiple-plus' color={Colors.white} size={scale(20)} />
+                    </TouchableOpacity>
+      </View>
+      <ScrollView
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh} />}
+      >
+        { tab=='2' && sentData.map((el,index)=> el.type == 'location' ?
+          <SentLocationRequest key={index} status={el.status} name={el.name} date={el.date} phone={el.phone } /> :
+          <SentFriendRequest key={index} status={el.status} name={el.name} date={el.date} phone={el.phone } />
+        ) }
+        { tab=='1' && recievedData.map((el,index)=> el.type == 'location' ?
+          <RecievedLocationRequest key={index} name={el.name} date={el.date} phone={el.phone } /> :
+          <RecievedFriendRequest key={index} name={el.name} date={el.date} phone={el.phone } />
+        ) }
+      </ScrollView>
+        </View>
+    )
 }
-
-
-
 
 const { width, heigth } = Dimensions.get('screen')
 
-const fooddata = [
-  {
-    title: 'Antony lac 1',
-    photo: Images.food4,
-    address: 'Les Berges du lac Restaurant',
-    duration: '44',
-    distance: '8.6',
-    id: '1',
+const sentData=[
+  { 
+    type:'location',
+    status:'accepted',
+    date:'Now',
+    name:'Abdesslam',
+    phone:'+216256655418'
   },
   {
-    title: 'plan B',
-    photo: Images.food5,
-    address: 'Les Berges du lac Restaurant',
-    duration: '44',
-    distance: '8.6',
-    id: '2',
+    type:'location',
+    status:'waiting',
+    date:'1 Hour ago',
+    name:'Layla',
+    phone:'+216266540117'
   },
   {
-    title: 'lac 2',
-    photo: Images.food3,
-    address: 'Les Berges du lac Restaurant',
-    duration: '44',
-    distance: '8.6',
-    id: '3',
+    type:'location',
+    status:'rejected',
+    date:'2 Hours ago',
+    name:'Sarah',
+    phone:'+216266002218'
+  },
+  { 
+    type:'friend',
+    status:'accepted',
+    date:'Now',
+    name:'Abdesslam',
+    phone:'+216256655418'
   },
   {
-    title: 'planet',
-    photo: Images.food5,
-    address: 'Les Berges du lac Restaurant',
-    duration: '44',
-    distance: '8.6',
-    id: '4',
-  }, {
-    title: 'lac 1',
-    photo: Images.food1,
-    address: 'Les Berges du lac Restaurant',
-    duration: '44',
-    distance: '8.6',
-    id: '5',
+    type:'friend',
+    status:'waiting',
+    date:'1 Hour ago',
+    name:'Layla',
+    phone:'+216266540117'
   },
   {
-    title: 'plan B',
-    photo: Images.food2,
-    address: 'Les Berges du lac Restaurant',
-    duration: '44',
-    distance: '8.6',
-    id: '6',
-  },
-  {
-    title: 'Six Seven',
-    photo: Images.food4,
-    address: 'Les Berges du lac Restaurant',
-    duration: '44',
-    distance: '8.6',
-    id: '7',
-  },
-  {
-    title: 'planet',
-    photo: Images.food4,
-    address: 'Les Berges du lac Restaurant',
-    duration: '44',
-    distance: '8.6',
-    id: '8',
-  }, {
-    title: 'lac 1',
-    photo: Images.food1,
-    address: 'Les Berges du lac Restaurant',
-    duration: '44',
-    distance: '8.6',
-    id: '9',
-  },
-  {
-    title: 'plan B',
-    photo: Images.food2,
-    address: 'Les Berges du lac Restaurant',
-    duration: '44',
-    distance: '8.6',
-    id: '10',
-  },
-  {
-    title: 'lac 2',
-    photo: Images.food3,
-    address: 'Les Berges du lac Restaurant',
-    duration: '44',
-    distance: '8.6',
-    id: '11',
-  },
-  {
-    title: 'planet',
-    photo: Images.food4,
-    address: 'Les Berges du lac Restaurant',
-    duration: '44',
-    distance: '8.6',
-    id: '12',
+    type:'friend',
+    status:'rejected',
+    date:'2 Hours ago',
+    name:'Sarah',
+    phone:'+216266002218'
   },
 ]
-
-const policedata = [
+const recievedData = [
   {
-    title: 'Police',
-    photo: Images.police1,
-    address: 'Hopital General de Kinshasa',
-    duration: '44',
-    distance: '8.6',
-    id: '1',
+    type:'location',
+    date:'1 Hour ago',
+    name:'Layla',
+    phone:'+216266540117'
   },
   {
-    title: 'Police',
-    photo: Images.police2,
-    address: 'Hopital General de Kinshasa',
-    duration: '44',
-    distance: '8.6',
-    id: '2',
-  }
-]
-const hospitaldata = [
-  {
-    title: 'Hopital',
-    photo: Images.hospital2,
-    address: 'Hopital General de Kinshasa',
-    duration: '44',
-    distance: '8.6',
-    id: '1',
+    type:'location',
+    date:'2 Hours ago',
+    name:'Sarah',
+    phone:'+216266002218'
   },
   {
-    title: 'Hopital',
-    photo: Images.hospital1,
-    address: 'Hopital General de Kinshasa',
-    duration: '44',
-    distance: '8.6',
-    id: '2',
-  }
+    type:'friend',
+    date:'1 Hour ago',
+    name:'Layla',
+    phone:'+216266540117'
+  },
+  {
+    type:'friend',
+    date:'2 Hours ago',
+    name:'Sarah',
+    phone:'+216266002218'
+  },
 ]

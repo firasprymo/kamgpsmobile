@@ -22,10 +22,10 @@ const wait = (timeout) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
 }
 
-export default function Favourite(props) {
+export default function Profil(props) {
 
   const [ menu, setMenu ] = useState(false)
-  const { token, setToken } = useAppContext()
+  const { token, setToken, setCurrentUser } = useAppContext()
   const [currentTab, setCurrentTab] = useState(true)
   const [user, setUser] = useState({ username:'', photo:'' })
   const [refreshing, setRefreshing] = React.useState(false);
@@ -58,7 +58,13 @@ export default function Favourite(props) {
           console.log(result)
           setUser({
             username: result.data.data.name,
-            photo: result.data.data.photo
+            photo: result.data.data.photo,
+          })
+          setCurrentUser({
+            username: result.data.data.name,
+            photo: result.data.data.photo,
+            id: result.data.data.id,
+            phone: result.data.data.phonenumber,
           })
         }
       })

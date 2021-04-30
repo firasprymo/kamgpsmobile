@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { ImageBackground, Image, StyleSheet, Dimensions, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { Colors } from '../constants/Colors';
 import { Images } from '../constants/Images';
@@ -8,22 +8,20 @@ import Feather from 'react-native-vector-icons/Feather'
 import { useAppContext } from '../context/AppContext';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { api } from '../constants/api_config';
-import Geocoder from 'react-native-geocoding';
 
-const emptyphotouri = Image.resolveAssetSource(Images.emptyphoto).uri
-const apiKey = 'AIzaSyDfxAFFp8jEZrtWFxr8FTieAsUAlQhFhAs'
-Geocoder.init(apiKey);
 
-export default function AddPlace(props) {
+
+
+export default function SavePlaceFromMap(props) {
     
-    const image = {uri : emptyphotouri}
-    const {markedPlace} = useAppContext()
     const {token} = useAppContext()
-    const latitude = markedPlace.latitude
-    const longitude = markedPlace.longitude
-    const [address, setAddress ] = useState('');
+    const _name = props.navigation.getParam('name');
+    const latitude = props.navigation.getParam('latitude');
+    const longitude = props.navigation.getParam('longitude');
+    const address = props.navigation.getParam('address');
+    const image = props.navigation.getParam('photo');
     const [photoChanged, setPhotoChanged] = useState(false)
-    const [ name, setName ] = useState('')
+    const [ name, setName ] = useState(_name)
     const [category, setCategory] = useState('');
     const [file, setFile] = useState({
         fileName: '',
@@ -31,10 +29,9 @@ export default function AddPlace(props) {
         type: '',
       })
    
-      
 
       const handleOk = () => {
-            if (category!='' && name.length > 1 && address!='') {
+            if (category!='' && name.length > 1 ) {
                 var myHeaders = new Headers();
 myHeaders.append("Authorization", `Bearer ${token}`);
 
@@ -52,10 +49,10 @@ if (photoChanged) {
       uri:
         Platform.OS === "android" ? file.uri : file.uri.replace("file://", "")
     });
-  } else {
+  }
+  else {
     formdata.append("photo", { uri: image.uri, type: "image/png", name: name+".png" });
   }
-
   console.log(formdata)
 
 var requestOptions = {
@@ -69,11 +66,11 @@ fetch(`${api.url}favorites/AjouterFavorite`, requestOptions)
   .then(response => response.json())
   .then(result => {
       console.log(result)
-      alert('Saved !')
+      props.navigation.goBack()
     })
   .catch(error => console.log('error', error));
             }
-            else alert("la catégorie ou le nom ou le lieu n'est pas rempli")
+            else alert("la catégorie ou le nom n'est pas rempli")
       }
 
     const launchImageLibraryFunction = () => {
@@ -103,21 +100,13 @@ fetch(`${api.url}favorites/AjouterFavorite`, requestOptions)
     
       }
       useEffect(()=>{
-
-        if (latitude!=''){
-        Geocoder.from(latitude, longitude)
-		.then(json => {
-        		var addressComponent = json.results[0].address_components[1].long_name;
-			setAddress(addressComponent);
-		})
-		.catch(error => console.warn(error));
-    }
-      },[latitude])
+        //console.log(latitude,'  ', longitude)
+      },[])
 
     return (
         <View style={styles.container} >
 
-<View style={styles.headBar} >
+            <View style={styles.headBar} >
                 <TouchableOpacity
                     onPress={() => props.navigation.goBack()}
                     style={{ padding: scale(5) }}>
@@ -281,27 +270,7 @@ fetch(`${api.url}favorites/AjouterFavorite`, requestOptions)
                             {address}
                         </Text>
                     </Text>
-        
-
-            <ImageBackground source={Images.mapCard} style={{ width: width, height: scale(100), marginTop: scale(10) }}>
-                <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center' }}>
-                    <TouchableOpacity
-                        onPress={() => props.navigation.navigate('SelectPlace')}
-                        style={{
-                            width: scale(250),
-                            height: scale(50),
-                            borderWidth: 1,
-                            borderRadius: scale(5),
-                            borderColor: Colors.white,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                        }}>
-                        <Text style={{ color: 'white', fontSize: scale(14) }}>Lieu sur la carte</Text>
-                    </TouchableOpacity>
-                </View>
-            </ImageBackground>
-
-
+                           
         </View>
     );
 }

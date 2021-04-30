@@ -7,13 +7,38 @@ import MainButton from './MainButton'
 import { Colors } from '../constants/Colors';
 import TextButton from './TextButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { api } from '../constants/api_config';
+import OneSignal from 'react-native-onesignal';
 import { useAppContext } from '../context/AppContext';
+import { api } from '../constants/api_config';
 
 
 export default function LoginComponent(props) {
+  function onIds(device){
+    console.log(device?.userId)
+    setDeviceID(device?.userId)
+  }
+   React.useEffect(() => {
+   
+     OneSignal.init(api.ONE_SIGNAL_ID);
+     OneSignal.addEventListener('ids', onIds);
+ 
+     //  OneSignal.enableSound(true);
+ 
+     // AsyncStorage.getItem('id').then(val => {
+     //   if (val) {
+     //     console.log({id: val});
+     //     //OneSignal.sendTag('id', val);
+     //     // AsyncStorage.getItem('token').then(tk => {
+     //     //   if (tk) {
+     //     //     AsyncStorage.setItem('token', tk).then(tok => {});
+     //     //   }
+     //     // });
+     //   }
+     // });
+   }, []);
 
-  const [ countryCode, setCountryCode ] = useState('')    
+  const [ deviceID, setDeviceID ] = useState('')
+  const [ countryCode, setCountryCode ] = useState('216')    
   const [phoneNumber, setPhoneNumber] = useState('')
   const [phoneErrorMessage, setPhoneErrorMessage] = useState('')
   const [password, setPassword] = useState('')
@@ -22,12 +47,41 @@ export default function LoginComponent(props) {
   const [isLoading, setIsLoading] = useState(false)
   const [ globalError, setGlobalError ] = useState('')
   const {setCurrentUser} = useAppContext();
-  const {setToken} = useAppContext();
+  const {setToken, } = useAppContext();
 
+
+
+  const refreshdata= (token) => {
+    
+    var myHeaders = new Headers();
+  myHeaders.append("Authorization", `Bearer ${token}`);
+
+  var raw = "";
+
+  var requestOptions = {
+    method: 'GET',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+  fetch(`${api.url}users/Me`, requestOptions)
+    .then(response => response.json())
+    .then(result => {
+      console.log(result)
+      if (result.status=='success'){
+        console.log(result)
+        setCurrentUser({
+          username: result.data.data.name,
+          photo: result.data.data.photo,
+          id: result.data.data.id,
+          phone: result.data.data.phonenumber,
+        })
+      }
+    })
+    .catch(error => console.log('error', error));
+  }
   // ++++++++++++++++++++++ login Handle +++++++++++++++++++++++++++++++++++++
 
-
-  //+++++++++
   const handelLoginBtn = () => {
     setIsLoading(true)
     checkPhone(phoneNumber)
@@ -36,7 +90,7 @@ export default function LoginComponent(props) {
       var myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
 
-      var raw = JSON.stringify({ "phonenumber": countryCode+phoneNumber, "password": password });
+      var raw = JSON.stringify({ "phonenumber": countryCode+phoneNumber, "password": password, "IDdevice":deviceID, });
 
       var requestOptions = {
         method: 'POST',
@@ -53,6 +107,7 @@ export default function LoginComponent(props) {
             // alert(result.token)
             // storeData(result.token)
             setToken(result.token)
+            refreshdata(result.token)
             props.navigation.navigate('Home')
           }
           else if (result.message){

@@ -11,19 +11,21 @@ export default function Input(props) {
   const countryCode = props.countryCode !=undefined ? props.countryCode : ''
   const setCountryCode = props.setCountryCode
   const [ modal, setModal ] = useState(false)
+  const textColor= props.textColor  ? props.textColor : 'white' 
+  const containerColor = props.containerColor  ? props.containerColor : '#d9d9d9' 
   return (
     <View>
-      <View style={[styles.container, { borderColor: props.errorMessage == '' ? '#d9d9d9' : Colors.red }, props.style]}>
-        <Icon name={props.name} size={15} color="white" />
+      <View style={[styles.container, { borderColor: props.errorMessage == '' ? containerColor : Colors.red }, props.style]}>
+        <Icon name={props.name} size={15} color={textColor} />
         {props.name == 'phone' && 
           <TouchableOpacity 
           onPress={()=>{setModal(true)}}
           style={{minWidth:scale(50), height:scale(25),
           alignItems:'center',justifyContent:'center',
           borderRightWidth:1,
-          borderColor: '#d9d9d9',
+          borderColor: containerColor,
           }}>
-            <Text style={{color:'white', fontSize:scale(14)}}>
+            <Text style={{color:textColor, fontSize:scale(14)}}>
               {'+'+countryCode}
             </Text>
             <CountryPicker 
@@ -44,10 +46,10 @@ export default function Input(props) {
           value={props.value}
           onChangeText={props.onChangeText}
           style={[styles.text, props.styleText]}
-          selectionColor='white'
+          selectionColor={textColor}
           keyboardType={props.keyboardType}
           placeholder={props.placeholder}
-          placeholderTextColor='white'
+          placeholderTextColor={textColor}
           secureTextEntry={props.secureTextEntry}
         />
       </View>

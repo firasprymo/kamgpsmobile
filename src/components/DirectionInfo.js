@@ -163,14 +163,27 @@ export default function DirectionInfo(props) {
                             Itineraire
                             </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{
-                        width: scale(100),
-                        height: scale(60),
-                        flexDirection: 'column',
-                        alignItems: 'center'
-                    }}>
+                    <TouchableOpacity
+                        onPress={()=>{
+                            props.navigation.navigate('SavePlace',{
+                                name: props.to.name,
+                                address: props.to.address,
+                                latitude: props.to.latitude,
+                                longitude: props.to.longitude,
+                                photo: image,
+                                })
+                            console.log(image)
+                            }}
+                        style={{
+                            width: scale(100),
+                            height: scale(60),
+                            flexDirection: 'column',
+                            alignItems: 'center'
+                            }}>
                         <Ionicons name='heart-outline' size={30} color={Colors.grey2} />
-                        <Text style={{ fontSize: scale(12) }}>Engistrer</Text>
+                        <Text style={{ fontSize: scale(12) }}>
+                            Engistrer
+                            </Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={{
                         width: scale(100),

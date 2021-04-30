@@ -22,7 +22,7 @@ import MapViewDirections from 'react-native-maps-directions';
 
 const apiKey = 'AIzaSyDfxAFFp8jEZrtWFxr8FTieAsUAlQhFhAs'
 Geocoder.init(apiKey);
-const types = ['', 'WALKING', 'DRIVING', 'CountryBICYCLING']
+const types = ['', 'WALKING', 'DRIVING', 'BICYCLING']
 
 export default function Maps(props) {
 
@@ -54,6 +54,7 @@ export default function Maps(props) {
   })
 
   useEffect(() => {
+    //props.navigation.navigate('SavePlace')
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
       timeout: 15000,
@@ -134,6 +135,7 @@ export default function Maps(props) {
         showUserLocation={true} >
         
           <MapViewDirections
+            timePrecision='now'
             mode={types[directionType]}
             origin={userLocation}
             destination={markedLocation}
@@ -222,6 +224,12 @@ export default function Maps(props) {
           </View>}
           {searchType && <GooglePlacesInput />}
         </View>
+        <TouchableOpacity
+          onPress={() => props.navigation.navigate('Notification')}
+          style={styles.imageContainer}
+        >
+          <MaterialCommunityIcons name='bell' size={scale(22)} color={Colors.grey2} />
+        </TouchableOpacity>
       </View>
 
 
@@ -260,14 +268,10 @@ export default function Maps(props) {
               .catch(error => {
                 const { code, message } = error;
                 //console.warn(code, message);
-                alert('activate your GPS for user experience')
+                if (code != 'CANCELLED'){
+                  alert('activate your GPS for user experience')
+                }
               })
-            // setRegion({
-            //   latitude: userLocation.latitude,
-            //   longitude: userLocation.longitude,
-            //   latitudeDelta: 0.015,
-            //   longitudeDelta: 0.0121,
-            // })
           }}
           style={{
             width: scale(50),
@@ -281,8 +285,9 @@ export default function Maps(props) {
             color={directionVisible ? Colors.tabColor : Colors.grey1} />
         </TouchableOpacity>
       </View>
-      { directionVisible && 
+     
         <DirectionInfo
+        navigation={props.navigation}
         type="location"
         toggleItineraire={toggleItineraire}
         from={userLocation}
@@ -292,7 +297,7 @@ export default function Maps(props) {
         directionType={directionType}
         setDirectionType={setDirectionType}
         directionValues={directionValues}
-      />}
+      />
       <Modal
         animationType="slide"
         transparent={true}
@@ -350,13 +355,14 @@ const styles = StyleSheet.create({
     width: width,
     height: scale(100),
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: scale(10),
     alignItems: 'flex-start',
     marginTop: scale(10),
     top: scale(0),
   },
   search: {
-    flex: 0.9,
+    flex: 1,
     flexDirection: 'row',
     height: scale(200),
     borderRadius: scale(5),

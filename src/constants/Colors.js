@@ -19,6 +19,7 @@ export const Colors = {
   grey4: '#d3d3d3',
   yellow: '#e8ad20',
   purple: '#4A69D9',
+  green2: 'mediumseagreen',
   
 
 };

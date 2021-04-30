@@ -20,13 +20,36 @@
  import AppNavigator from './src/navigation/AppNavigator';;
  import Styles from './src/constants/Styles';
  import {AppContextProvider, useAppContext} from './src/context/AppContext';
+import { api } from './src/constants/api_config';
+import OneSignal from 'react-native-onesignal';
 
 //   console.disableYellowBox = true;
 // LogBox.ignoreAllLogs()
 
  export const queryClient = new QueryClient();
+ function onIds(device){
+   console.log(device?.userId)
+ }
  const App = () => {
- 
+  React.useEffect(() => {
+  
+    OneSignal.init(api.ONE_SIGNAL_ID);
+    OneSignal.addEventListener('ids', onIds);
+
+    //  OneSignal.enableSound(true);
+
+    // AsyncStorage.getItem('id').then(val => {
+    //   if (val) {
+    //     console.log({id: val});
+    //     //OneSignal.sendTag('id', val);
+    //     // AsyncStorage.getItem('token').then(tk => {
+    //     //   if (tk) {
+    //     //     AsyncStorage.setItem('token', tk).then(tok => {});
+    //     //   }
+    //     // });
+    //   }
+    // });
+  }, []);
    return (
   
      

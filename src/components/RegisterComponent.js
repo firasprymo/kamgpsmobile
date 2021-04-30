@@ -19,12 +19,14 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Geocoder from 'react-native-geocoding';
+import OneSignal from 'react-native-onesignal';
 
 const apiKey = 'AIzaSyDfxAFFp8jEZrtWFxr8FTieAsUAlQhFhAs'
 Geocoder.init(apiKey);
 
 export default function RegisterComponent(props) {
 
+  const [ deviceId, setDeviceID ] = useState('')
   const [countryCode, setCountryCode] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [errorFromServer, setErrorFromServer] = useState('')
@@ -131,6 +133,7 @@ export default function RegisterComponent(props) {
       myHeaders.append("Content-Type", "application/json");
 
       var formdata = new FormData();
+      formdata.append("IDdivice", deviceId)
       formdata.append("email", email);
       formdata.append("phonenumber", countryCode + phoneNumber);
       formdata.append("name", username);
@@ -272,12 +275,25 @@ export default function RegisterComponent(props) {
       return true
     }
   }
+// React.useEffect(() => {
+//   // OneSignal.setAppId()
+//     OneSignal.addEventListener('ids', onIds);
+//     function onIds(device) {
+//       console.log(device);
+//       if (device?.userId) {
+//         console.log(device?.userId)
+//         setDeviceID(device.userId)
+//         OneSignal.enableSound(true);
+//         OneSignal.enableVibrate(true);
+//       }
+//     }
+//   }, []);
 
   return (
     <View style={styles.container}>
 
       { codeInput ? <ValidationComponent
-        phoneNumber={phoneNumber}
+        phoneNumber={countryCode + phoneNumber}
         setCurrentTab={props.setCurrentTab}
         style={{ marginTop: scale(80) }}
         parentComponent='register'

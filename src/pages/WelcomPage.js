@@ -9,18 +9,50 @@ import * as Animatable from 'react-native-animatable';
 import { Colors } from '../constants/Colors';
 import { useAppContext } from '../context/AppContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { api } from '../constants/api_config';
 
 
 
 
 export default function WelcomPage(props) {
-  const {setToken} = useAppContext();
+  const {setToken, setCurrentUser} = useAppContext();
   React.useEffect(() => {
     setTimeout(() => {
       AsyncStorage.getItem('token').then((token) => {
         if (token) {
           
-          props.navigation.navigate('Home');
+          
+          var myHeaders = new Headers();
+          myHeaders.append("Authorization", `Bearer ${token}`);
+      
+          var raw = "";
+      
+          var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+          };
+          fetch(`${api.url}users/Me`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+              console.log(result)
+              if (result.status=='success'){
+                console.log(result)
+                setCurrentUser({
+                  username: result.data.data.name,
+                  photo: result.data.data.photo,
+                  id: result.data.data.id,
+                  phone: result.data.data.phonenumber,
+                })
+                props.navigation.navigate('Home');
+              }
+            })
+            .catch(error => {
+              props.navigation.navigate('Home');
+              console.log('error', error)
+            });
+
         } else {
           props.navigation.navigate('Auth');
         }
