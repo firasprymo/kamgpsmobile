@@ -12,7 +12,7 @@ import { useAppContext } from '../context/AppContext';
 
 
 export default function AddFriend(props) {
-    const [ searchInput, setSearchInput ] = useState('')
+    const [ allowSend, setAllowSend ] = useState(true)
     const [ countryCode, setCountryCode ] = useState('216')    
   const [phoneNumber, setPhoneNumber] = useState('')
   const [phoneErrorMessage, setPhoneErrorMessage] = useState('')
@@ -30,6 +30,7 @@ export default function AddFriend(props) {
   const search = () => {
    //console.log(' current user: ',currentUser)
     setSearchLoading(true)
+    
     var myHeaders = new Headers();
   myHeaders.append("Authorization", `Bearer ${token}`);
   myHeaders.append("Content-Type", "application/json");
@@ -48,6 +49,7 @@ export default function AddFriend(props) {
     .then(result => {
       setSearchLoading(false)
       console.log(result)
+      setAllowSend(true)
       if (result.data!= undefined) {
         setResult('yes')
         setFoundUser({
@@ -56,7 +58,11 @@ export default function AddFriend(props) {
           IDdevice: result.data.IDdevice,
           photo: result.data.photo,
         })
-      } else if(result.error.statusCode==400){
+      } else if (result.message=='tu es déjà ami avec lui') {
+        setResult('friend')
+      } else if(result.message=='vous avez déja envoyé une invitation') {
+        setResult('sent')
+      } else {
         setResult('no')
       }
     })
@@ -85,6 +91,7 @@ fetch(`${api.url}friends/demendeFriends`, requestOptions)
   .then(response => response.json())
   .then(result => {
     setAddLoading(false)
+    setAllowSend(false)
     console.log(result)
   })
   .catch(error => {
@@ -188,8 +195,9 @@ fetch(`${api.url}friends/demendeFriends`, requestOptions)
                 borderLeftWidth: 0.5,
             }}></View>
             <View style={{flex:0.3, alignItems:'center', justifyContent:'center'}}>
+              {!allowSend && <MaterialCommunityIcons name='checkbox-marked' color={Colors.logoGreen} size={scale(25)} />}
               
-              { currentUser.phone != foundUser.phone && <TouchableOpacity
+              { currentUser.phone != foundUser.phone && allowSend && <TouchableOpacity
                       onPress={()=>{addFriend()}}
                       disabled={addLoading}
                       style={{
@@ -211,6 +219,14 @@ fetch(`${api.url}friends/demendeFriends`, requestOptions)
           {result=='no' && <View style={{alignSelf:'center',flexDirection:'column', alignItems:'center',marginTop:scale(20)}}>
           <MaterialCommunityIcons name='cancel' color={Colors.red} size={scale(50)} />
           <Text>No user found with the number entered</Text>
+          </View>}
+          {result=='friend' && <View style={{alignSelf:'center',flexDirection:'column', alignItems:'center',marginTop:scale(20)}}>
+          <MaterialCommunityIcons name='cancel' color={Colors.green2} size={scale(50)} />
+          <Text>You are already friends with this user</Text>
+          </View>}
+          {result=='sent' && <View style={{alignSelf:'center',flexDirection:'column', alignItems:'center',marginTop:scale(20)}}>
+          <MaterialCommunityIcons name='cancel' color={Colors.yellow} size={scale(50)} />
+          <Text>You already sent a friend request to this user</Text>
           </View>}
         </View>
     )

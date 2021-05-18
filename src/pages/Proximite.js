@@ -1,24 +1,85 @@
-import React,{ useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Animated, Image,
   Dimensions,
   View, Text, TouchableOpacity,
-  TouchableHighlight
+  TouchableHighlight,
+  ScrollView,
+  RefreshControl
 } from 'react-native';
 import { scale } from 'react-native-size-matters';
 import { Images } from '../constants/Images';
 import Carousel from 'react-native-snap-carousel';
 import { Colors } from '../constants/Colors';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Content } from 'native-base';
-import {hospitaldata,Fooddata,policedata,pharmaciedata} from './FoodData';
+import { useAppContext } from '../context/AppContext';
+import { getNearPlaces } from '../services/nearPlaces'
+import GetLocation from 'react-native-get-location'
 
+
+const wait = (timeout) => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+}
 
 export default function Proximite(props) {
 
+
+  const { token, setMarkedPlace } = useAppContext();
   const [activeIndex, setActiveIndex] = useState(0)
   const [activeCardIndex, setActiveCardIndex] = useState(0)
+  const [refreshing, setRefreshing] = useState(false);
+  const [hospitals, setHospitals] = useState([]);
+  const [polices, setPolices] = useState([])
+  const [pharmacies, setPharmacies] = useState([])
+  const [restaurant, setRestaurant] = useState([])
+  const [userLocation, setUserLocation] = useState({
+    longitude: 0,
+    latitude: 0,
+    address: '',
+  })
 
+  useEffect(() => {
+    refreshdata()
+
+
+  }, [])
+
+  const getLocation = () => {
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 15000,
+    })
+      .then(location => {
+        setUserLocation({
+          longitude: location.longitude,
+          latitude: location.latitude,
+        })
+        let local={
+          longitude: location.longitude,
+          latitude: location.latitude,
+        }
+        getNearPlaces(token, 'hospital', local).then(data => setHospitals(data)).catch(err => setHospitals(err))
+        getNearPlaces(token, 'police', local).then(data => setPolices(data)).catch(err => setPolices(err))
+        getNearPlaces(token, 'pharmacy', local).then(data => setPharmacies(data)).catch(err => setPharmacies(err))
+        getNearPlaces(token, 'restaurant', local).then(data => setRestaurant(data)).catch(err => setRestaurant(err))
+      })
+      .catch(error => {
+        const { code, message } = error;
+        console.warn(code, message);
+        alert("enable your GPS")
+      })
+  }
+  const refreshdata = () => {
+    getLocation()
+
+  }
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    refreshdata()
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
+  // ++++++++++++++ Cards functions ++++++++++++++++++++++++++++++++++++++++++++++++++++++
   const _renderCard = ({ item, index }) => {
     return (
       <View
@@ -52,29 +113,27 @@ export default function Proximite(props) {
             marginRight: scale(20)
           }}>
             <TouchableOpacity
-              onPress={() => alert(item.title)}
+              onPress={() => {
+                setMarkedPlace({
+                  lat: parseFloat(item.lat),
+                  lng:  parseFloat(item.lng),
+                  namee: item.address,
+                })
+                props.navigation.navigate('Maps')
+              }}
               style={{ margin: scale(5) }}>
               <Image
                 source={Images.mapTabIcon2}
                 style={{ width: scale(25), height: scale(25) }} />
             </TouchableOpacity>
+
             <View style={{
               flexDirection: 'column',
               alignItems: 'center',
               padding: scale(2)
             }}>
-              <Text style={{ color: Colors.tabColor }}>Min</Text>
-              <Text style={{ color: Colors.tabColor }}>
-                {item.duration}
-              </Text>
-            </View>
-            <View style={{
-              flexDirection: 'column',
-              alignItems: 'center',
-              padding: scale(2)
-            }}>
-              <Text style={{ color: Colors.tabColor }}>Km</Text>
-              <Text style={{ color: Colors.tabColor }}>
+              <Text style={{ color: Colors.grey2 }}>Km</Text>
+              <Text style={{ color: Colors.grey2 }}>
                 {item.distance}
               </Text>
             </View>
@@ -83,13 +142,13 @@ export default function Proximite(props) {
             flexDirection: 'column',
             justifyContent: 'center',
             marginHorizontal: scale(5),
-            flex:0.6
+            flex: 0.6
           }}>
             <Text style={{ fontSize: scale(10), fontWeight: 'bold' }}>
               {item.address}
             </Text>
           </View>
-          <TouchableOpacity style={{flex:0.1, marginTop: scale(5) }}>
+          <TouchableOpacity style={{ flex: 0.1, marginTop: scale(5) }}>
             <IconMaterial name='heart-outline' size={scale(25)} />
           </TouchableOpacity>
         </View>
@@ -121,7 +180,8 @@ export default function Proximite(props) {
             </View>
             <Text style={{
               color: Colors.grey2,
-              alignSelf: 'center'
+              alignSelf: 'center',
+              textAlign:'center'
             }}>
               {item.title}
             </Text>
@@ -151,7 +211,7 @@ export default function Proximite(props) {
                   borderRadius: scale(12)
                 }} >
               </Image>
-              <Text style={{
+              {/* <Text style={{
                 marginTop: scale(-20),
                 color: Colors.white,
                 alignSelf: 'center',
@@ -159,7 +219,14 @@ export default function Proximite(props) {
                 fontWeight: 'bold'
               }}>
                 {item.title}
-              </Text>
+              </Text> */}
+              <Text style={{
+              color: Colors.grey2,
+              alignSelf: 'center',
+              textAlign:'center'
+            }}>
+              {item.title}
+            </Text>
             </View>
 
           </View>
@@ -167,18 +234,19 @@ export default function Proximite(props) {
       )
     }
   }
+  // ++++++++++++++ Cards functions ++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   return (
     <View style={{ flex: 1, flexDirection: 'column' }}>
       <View style={{
-          flexDirection: 'row',
-          width: width,
-          justifyContent: 'center',
-          marginTop: scale(10),
-          paddingBottom: scale(10),
-          borderBottomColor:Colors.grey4,
-          borderBottomWidth: 0.2,
-          }}>
+        flexDirection: 'row',
+        width: width,
+        justifyContent: 'center',
+        marginTop: scale(10),
+        paddingBottom: scale(10),
+        borderBottomColor: Colors.grey4,
+        borderBottomWidth: 0.2,
+      }}>
         <Text style={{
           fontFamily: "EpoqueSeria-BoldItalic",
           fontSize: scale(25),
@@ -187,209 +255,233 @@ export default function Proximite(props) {
           A proximité
               </Text>
       </View>
-      <Content>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh} />}
+      >
         <Animated.View style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              marginTop: scale(10)
-              }}>
+          flexDirection: 'row',
+          justifyContent: 'center',
+          marginTop: scale(10)
+        }}>
           <Carousel
             inactiveSlideScale={0.7}
             layout={"default"}
             onSnapToItem={(index) => setActiveIndex(index)}
-            data={Fooddata}
+            data={restaurant}
             sliderWidth={scale(355)}
             itemWidth={scale(90)}
             renderItem={_renderItem} />
         </Animated.View>
-        <TouchableOpacity style={{
-            marginTop: scale(0),
-            alignItems: 'center'
-            }}>
+        <TouchableOpacity
+            onPress={() => {
+              setMarkedPlace({
+                lat: parseFloat(restaurant[activeIndex].lat),
+                lng:  parseFloat(restaurant[activeIndex].lng),
+                namee: restaurant[activeIndex].address,
+              })
+              props.navigation.navigate('Maps')
+            }}
+            style={{
+          marginTop: scale(5),
+          alignItems: 'center',
+          backgroundColor:'white',
+          width: scale(50),
+          alignSelf:'center',
+          padding:scale(5),
+          borderRadius:scale(20),
+
+        }}>
           <Image style={{
-              width: scale(30),
-              height: scale(30)
-              }} 
-              source={Images.mapTabIcon2}
-              />
+            width: scale(30),
+            height: scale(30)
+          }}
+            source={Images.mapTabIcon2}
+          />
         </TouchableOpacity>
-        <View style={{flexDirection:'row', 
+        <View style={{
+          flexDirection: 'row',
           marginLeft: scale(20),
           marginTop: scale(20),
-          justifyContent:'space-between',
-          alignItems:'center'
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <Text style={{
+            fontFamily: "EpoqueSeria-BoldItalic",
+            fontSize: scale(25),
+            color: Colors.backgroundColor1,
+
           }}>
-        <Text style={{
-          fontFamily: "EpoqueSeria-BoldItalic",
-          fontSize: scale(25),
-          color: Colors.backgroundColor1,
-        
-        }}>
-          Urgence
+            Urgence
       </Text>
-      <TouchableOpacity style={{
-        marginRight:scale(20),
-        elevation:5,
-        backgroundColor:'white',
-        padding:scale(5),
-        borderRadius: scale(10)
-      }}
-        onPress={()=>props.navigation.navigate('VoirTout',{type:'Urgence'})}
-      >
-        <Text style={{
-          fontFamily: "EpoqueSeria-BoldItalic",
-          fontSize: scale(16),
-          color: Colors.backgroundColor1,
-        }}>
-          Voir tout</Text>
-      </TouchableOpacity>
-      </View>
-        <Animated.View style={{
-            flex: 1,
-            flexDirection: 'row',
-            marginTop: scale(20)
+          <TouchableOpacity style={{
+            marginRight: scale(20),
+            elevation: 5,
+            backgroundColor: 'white',
+            padding: scale(5),
+            borderRadius: scale(10)
+          }}
+            onPress={() => props.navigation.navigate('VoirTout', { type: 'Urgence', location: userLocation })}
+          >
+            <Text style={{
+              fontFamily: "EpoqueSeria-BoldItalic",
+              fontSize: scale(16),
+              color: Colors.backgroundColor1,
             }}>
+              Voir tout</Text>
+          </TouchableOpacity>
+        </View>
+        <Animated.View style={{
+          flex: 1,
+          flexDirection: 'row',
+          marginTop: scale(20)
+        }}>
           <Carousel
             layout={"default"}
             onSnapToItem={(index) => setActiveCardIndex(index)}
-            data={hospitaldata}
+            data={hospitals}
             sliderWidth={scale(200)}
             itemWidth={scale(300)}
             renderItem={_renderCard} />
         </Animated.View>
-        <View style={{flexDirection:'row', 
+        <View style={{
+          flexDirection: 'row',
           marginLeft: scale(20),
           marginTop: scale(20),
-          justifyContent:'space-between',
-          alignItems:'center'
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <Text style={{
+            fontFamily: "EpoqueSeria-BoldItalic",
+            fontSize: scale(25),
+            color: Colors.backgroundColor1,
+
           }}>
-        <Text style={{
-          fontFamily: "EpoqueSeria-BoldItalic",
-          fontSize: scale(25),
-          color: Colors.backgroundColor1,
-        
-        }}>
-          Postes polices
+            Postes polices
       </Text>
-      <TouchableOpacity style={{
-        marginRight:scale(20),
-        elevation:5,
-        backgroundColor:'white',
-        padding:scale(5),
-        borderRadius: scale(10)
-      }}
-      onPress={()=>props.navigation.navigate('VoirTout',{type:'Postes polices'})}
-      >
-        <Text style={{
-          fontFamily: "EpoqueSeria-BoldItalic",
-          fontSize: scale(16),
-          color: Colors.backgroundColor1,
-        }}>
-          Voir tout</Text>
-      </TouchableOpacity>
-      </View>
-        <Animated.View style={{
-            flex: 1,
-            flexDirection: 'row',
-            marginTop: scale(20)
+          <TouchableOpacity style={{
+            marginRight: scale(20),
+            elevation: 5,
+            backgroundColor: 'white',
+            padding: scale(5),
+            borderRadius: scale(10)
+          }}
+            onPress={() => props.navigation.navigate('VoirTout', { type: 'Postes polices', location: userLocation })}
+          >
+            <Text style={{
+              fontFamily: "EpoqueSeria-BoldItalic",
+              fontSize: scale(16),
+              color: Colors.backgroundColor1,
             }}>
+              Voir tout</Text>
+          </TouchableOpacity>
+        </View>
+        <Animated.View style={{
+          flex: 1,
+          flexDirection: 'row',
+          marginTop: scale(20)
+        }}>
           <Carousel
             layout={"default"}
             onSnapToItem={(index) => setActiveCardIndex(index)}
-            data={policedata}
+            data={polices}
             sliderWidth={scale(200)}
             itemWidth={scale(300)}
             renderItem={_renderCard} />
         </Animated.View>
-        <View style={{flexDirection:'row', 
+        <View style={{
+          flexDirection: 'row',
           marginLeft: scale(20),
           marginTop: scale(20),
-          justifyContent:'space-between',
-          alignItems:'center'
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <Text style={{
+            fontFamily: "EpoqueSeria-BoldItalic",
+            fontSize: scale(25),
+            color: Colors.backgroundColor1,
+
           }}>
-        <Text style={{
-          fontFamily: "EpoqueSeria-BoldItalic",
-          fontSize: scale(25),
-          color: Colors.backgroundColor1,
-        
-        }}>
-          Pharmacie
+            Pharmacie
       </Text>
-      <TouchableOpacity style={{
-        marginRight:scale(20),
-        elevation:5,
-        backgroundColor:'white',
-        padding:scale(5),
-        borderRadius: scale(10)
-      }}
-      onPress={()=>props.navigation.navigate('VoirTout',{type:'Pharmacie'})}
-      >
-        <Text style={{
-          fontFamily: "EpoqueSeria-BoldItalic",
-          fontSize: scale(16),
-          color: Colors.backgroundColor1,
-        }}>
-          Voir tout</Text>
-      </TouchableOpacity>
-      </View>
-        <Animated.View style={{
-            flex: 1,
-            flexDirection: 'row',
-            marginTop: scale(20)
+          <TouchableOpacity style={{
+            marginRight: scale(20),
+            elevation: 5,
+            backgroundColor: 'white',
+            padding: scale(5),
+            borderRadius: scale(10)
+          }}
+            onPress={() => props.navigation.navigate('VoirTout', { type: 'Pharmacie', location: userLocation })}
+          >
+            <Text style={{
+              fontFamily: "EpoqueSeria-BoldItalic",
+              fontSize: scale(16),
+              color: Colors.backgroundColor1,
             }}>
-          { <Carousel
+              Voir tout</Text>
+          </TouchableOpacity>
+        </View>
+        <Animated.View style={{
+          flex: 1,
+          flexDirection: 'row',
+          marginTop: scale(20)
+        }}>
+          {<Carousel
             layout={"default"}
             onSnapToItem={(index) => setActiveCardIndex(index)}
-            data={pharmaciedata}
+            data={pharmacies}
             sliderWidth={scale(200)}
             itemWidth={scale(300)}
-            renderItem={_renderCard} /> }
+            renderItem={_renderCard} />}
         </Animated.View>
-        <View style={{flexDirection:'row', 
+        <View style={{
+          flexDirection: 'row',
           marginLeft: scale(20),
           marginTop: scale(20),
-          justifyContent:'space-between',
-          alignItems:'center'
-          }}>
-        <Text style={{
-          fontFamily: "EpoqueSeria-BoldItalic",
-          fontSize: scale(25),
-          color: Colors.backgroundColor1,
-        
+          justifyContent: 'space-between',
+          alignItems: 'center'
         }}>
-          Autre
+          <Text style={{
+            fontFamily: "EpoqueSeria-BoldItalic",
+            fontSize: scale(25),
+            color: Colors.backgroundColor1,
+
+          }}>
+            Autre
       </Text>
-      <TouchableOpacity style={{
-        marginRight:scale(20),
-        elevation:5,
-        backgroundColor:'white',
-        padding:scale(5),
-        borderRadius: scale(10)
-      }}>
-        <Text style={{
-          fontFamily: "EpoqueSeria-BoldItalic",
-          fontSize: scale(16),
-          color: Colors.backgroundColor1,
-        }}
-        onPress={()=>props.navigation.navigate('VoirTout',{type:'Autre'})}
-        >
-          Voir tout</Text>
-      </TouchableOpacity>
-      </View>
+          <TouchableOpacity style={{
+            marginRight: scale(20),
+            elevation: 5,
+            backgroundColor: 'white',
+            padding: scale(5),
+            borderRadius: scale(10)
+          }}>
+            <Text style={{
+              fontFamily: "EpoqueSeria-BoldItalic",
+              fontSize: scale(16),
+              color: Colors.backgroundColor1,
+            }}
+              onPress={() => props.navigation.navigate('VoirTout', { type: 'Autre', location: userLocation })}
+            >
+              Voir tout</Text>
+          </TouchableOpacity>
+        </View>
         <Animated.View style={{
-            flex: 1,
-            flexDirection: 'row',
-            marginTop: scale(20)
-            }}>
-          { <Carousel
+          flex: 1,
+          flexDirection: 'row',
+          marginTop: scale(20)
+        }}>
+          {<Carousel
             layout={"default"}
             onSnapToItem={(index) => setActiveCardIndex(index)}
-            data={Fooddata}
+            data={restaurant}
             sliderWidth={scale(200)}
             itemWidth={scale(300)}
-            renderItem={_renderCard} /> }
+            renderItem={_renderCard} />}
         </Animated.View>
-      </Content>
+      </ScrollView>
     </View>
   );
 }

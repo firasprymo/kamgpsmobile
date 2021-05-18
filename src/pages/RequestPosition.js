@@ -18,18 +18,80 @@ export default function RequestPosition(props) {
   const [phoneErrorMessage, setPhoneErrorMessage] = useState('')
   const [ foundUser, setFoundUser ] = useState({
     name:'Name',
-    phone:'+Phonenumber',
+    phone:'Phonenumber',
     IDdevice:'',
     photo:'',
   })
   const [ searchLoading, setSearchLoading ] = useState(false)
   const [ addLoading, setAddLoading ] = useState(false)
   const { token, currentUser } = useAppContext()
-  const [ result, setResult ] = useState('yes')
+  const [ result, setResult ] = useState('')
 
 
-    const search = () => {}
-    const addFriend = () => {}
+    const search = () => {
+      var myHeaders = new Headers();
+      myHeaders.append("Authorization", `Bearer ${token}`);
+myHeaders.append("Content-Type", "application/json");
+
+var raw = JSON.stringify({"phonenumber":countryCode+phoneNumber});
+
+var requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: raw,
+  redirect: 'follow'
+};
+
+fetch(`${api.url}friends/recherchfriend`, requestOptions)
+  .then(response => response.json())
+  .then(result => {
+    setSearchLoading(false)
+    console.log(result)
+    if (result.data!= undefined) {
+      setResult('yes')
+      setFoundUser({
+        name: result.data.name,
+        phone: result.data.phonenumber,
+        IDdevice: result.data.IDdevice,
+        photo: result.data.photo,
+      })
+    } else {
+      setResult('no')
+    }
+  })
+  .catch(error => console.log('error', error));
+    }
+
+    const position = () => {
+      setAddLoading(true)
+    var myHeaders = new Headers();
+myHeaders.append("Authorization", `Bearer ${token}`);
+myHeaders.append("Content-Type", "application/json");
+
+var raw = JSON.stringify({
+  "phonenumber": foundUser.phone,
+  "app_id": api.ONE_SIGNAL_ID ,
+  "contents":{"en":`${currentUser.username} vous a envoyé une demande pour lui partager ton localisation.`},
+  "headings":{"en":"Demande localisation"}});
+
+var requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: raw,
+  redirect: 'follow'
+};
+
+fetch(`${api.url}friends/sendNotification`, requestOptions)
+  .then(response => response.json())
+  .then(result => {
+    setAddLoading(false)
+    console.log(result)
+  })
+  .catch(error => {
+    setAddLoading(false)
+    console.log('error', error)
+});
+    }
     return(
         <View style={{flex:1,backgroundColor:'white'}}>
             <View style={{
@@ -42,13 +104,21 @@ export default function RequestPosition(props) {
           borderBottomWidth: 0.2,
           }}>
               <TouchableOpacity
-                    onPress={() => props.navigation.goBack()}
-                    style={{ padding: scale(5),
+                    onPress={()=>props.navigation.navigate('AddFriend')}
+                    style={{ 
+                      paddingVertical: scale(3) ,
                         position:'absolute',
-                        left:scale(10),
-                        marginTop:scale(-5),
+                        right:scale(0),
+                        borderWidth:1,
+                        borderRightWidth:0,
+                        borderColor: Colors.logoGreen,
+                        borderTopLeftRadius: scale(15),
+                        paddingHorizontal: scale(15),
+                        backgroundColor: Colors.logoGreen,
+                        borderBottomLeftRadius: scale(15),
+                        elevation:5
                      }}>
-                     <AntDesign name='arrowleft' size={30} color='grey' />
+                     <MaterialCommunityIcons name='account-multiple-plus' color={Colors.white} size={scale(24)} />
                 </TouchableOpacity>
         <Text style={{
           fontFamily: "EpoqueSeria-BoldItalic",
@@ -126,7 +196,7 @@ export default function RequestPosition(props) {
             <View style={{flex:0.3, alignItems:'center', justifyContent:'center'}}>
               
               { currentUser.phone != foundUser.phone && <TouchableOpacity
-                      onPress={()=>{addFriend()}}
+                      onPress={()=>{position()}}
                       disabled={addLoading}
                       style={{
                         backgroundColor: Colors.logoBlue,

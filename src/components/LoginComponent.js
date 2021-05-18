@@ -81,7 +81,23 @@ export default function LoginComponent(props) {
     .catch(error => console.log('error', error));
   }
   // ++++++++++++++++++++++ login Handle +++++++++++++++++++++++++++++++++++++
+  const sendID = (token) => {
+    var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+      myHeaders.append("Authorization", `Bearer ${token}`);
+      var raw = JSON.stringify({ "IDdevice":deviceID, });
 
+      var requestOptions = {
+        method: 'PATCH',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+      };
+      fetch(`${api.url}users/updateIDdevice`, requestOptions)
+        .then(response => response.json())
+        .then(result => {console.log(result)})
+        .catch(error => console.log(error))
+  }
   const handelLoginBtn = () => {
     setIsLoading(true)
     checkPhone(phoneNumber)
@@ -90,7 +106,7 @@ export default function LoginComponent(props) {
       var myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
 
-      var raw = JSON.stringify({ "phonenumber": countryCode+phoneNumber, "password": password, "IDdevice":deviceID, });
+      var raw = JSON.stringify({ "phonenumber": countryCode+phoneNumber, "password": password, });
 
       var requestOptions = {
         method: 'POST',
@@ -108,6 +124,7 @@ export default function LoginComponent(props) {
             // storeData(result.token)
             setToken(result.token)
             refreshdata(result.token)
+            sendID(result.token)
             props.navigation.navigate('Home')
           }
           else if (result.message){

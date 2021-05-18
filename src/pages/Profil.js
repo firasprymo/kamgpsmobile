@@ -28,8 +28,15 @@ export default function Profil(props) {
   const { token, setToken, setCurrentUser } = useAppContext()
   const [currentTab, setCurrentTab] = useState(true)
   const [user, setUser] = useState({ username:'', photo:'' })
-  const [refreshing, setRefreshing] = React.useState(false);
-  
+  const [refreshing, setRefreshing] = useState(false);
+  const [ friends, setFriends ] = useState({
+    count:0,
+    data: []
+  })
+  const [ locations, setLocations ] = useState({
+    count:0,
+    data: []
+  })
   const logout = () => {
     console.log('logout token = ', token)
     AsyncStorage.clear();
@@ -37,9 +44,7 @@ export default function Profil(props) {
     props.navigation.navigate('Auth')
     
   }
-  const refreshdata= () => {
-    
-      var myHeaders = new Headers();
+  const getUserInfo = () => {   var myHeaders = new Headers();
     myHeaders.append("Authorization", `Bearer ${token}`);
 
     var raw = "";
@@ -68,11 +73,64 @@ export default function Profil(props) {
           })
         }
       })
-      .catch(error => console.log('error', error));
-  
+      .catch(error => console.log('error', error));}
+
+  const getFriends = () => {
+    var myHeaders = new Headers();
+myHeaders.append("Authorization", `Bearer ${token}`);
+
+var requestOptions = {
+  method: 'GET',
+  headers: myHeaders,
+  redirect: 'follow'
+};
+
+fetch(`${api.url}friends/listeFrends`, requestOptions)
+  .then(response => response.json())
+  .then(result => {
+    if (result.count!=undefined){
+    setFriends({
+      count:result.count,
+      data: result.data
+    })
+  }
+    //console.log(result)
+  })
+  .catch(error => console.log('error', error));
+  }
+  const getLocations = () => {
+    var myHeaders = new Headers();
+myHeaders.append("Authorization", `Bearer ${token}` );
+
+var requestOptions = {
+  method: 'GET',
+  headers: myHeaders,
+  redirect: 'follow'
+};
+
+fetch(`${api.url}favorites/ListeFavoriteUser`, requestOptions)
+  .then(response => response.json())
+  .then(result => {
+    if (result.count!= undefined){
+    setLocations({
+      count:result.count,
+      data: result.data
+    })
+  }
+    //console.log(result)
+  })
+  .catch(error => console.log('error', error));
+  }
+
+  const refreshdata= () => {
+    
+    getUserInfo()
+    getFriends()
+    getLocations()
 }
 
   const onRefresh = React.useCallback(() => {
+    console.log("onrefresh ===",locations.data)
     setRefreshing(true);
     refreshdata()
     wait(2000).then(() => setRefreshing(false));
@@ -126,39 +184,7 @@ export default function Profil(props) {
           right: scale(0),
           paddingHorizontal: scale(5)
         }}>
-          {/* <DropDownPicker
-          arrowStyle={{backgroundColor:null, height: scale(30), alignSelf:'center'}}
-          placeholder=''
-          customArrowUp={()=><SimpleLineIcons name='settings' size={30} color={Colors.tabColor}/>}
-          customArrowDown={()=><SimpleLineIcons name='settings' size={30} color={Colors.tabColor}/>}
-          showArrow={true}
-    items={[
-        {label: '', value: 'pencil', icon: () => 
-          <View style={{flexDirection:'row', alignItems:'center'}}>
-          <SimpleLineIcons name='pencil' size={20} color={Colors.tabColor}/>
-          <Text style={{fontSize: scale(12)}}>Modifier profil</Text>
-        </View> 
-        },
-        {label: '', value: 'déconnecter', icon: () => 
-        <View style={{flexDirection:'row', alignItems:'center'}}>
-        <SimpleLineIcons name='logout' size={20} color={Colors.tabColor}/>
-        <Text style={{fontSize: scale(12)}}>Déconnecter</Text>
-      </View> 
-      },
-    ]}
-    
-    containerStyle={{height: 40, width: scale(120),borderWidth:0,backgroundColor:null}}
-    style={{backgroundColor: null, borderWidth:0}}
-    itemStyle={{
-        justifyContent: 'flex-start'
-    }}
-    dropDownStyle={{backgroundColor: '#fafafa'}}
-    onChangeItem={item => 
-      {
-        console.log(item)
-      }
-    }
-/> */}
+          
 <View style={{position: 'absolute',flexDirection:'column', alignItems:'flex-end',flex:1, width:scale(100),right:scale(10), top:scale(-10)}}> 
 <TouchableOpacity
 onPress={() => setMenu(!menu)}
@@ -181,23 +207,7 @@ style={{height: 40, width: scale(100),flexDirection:'row', alignItems:'center',p
 </TouchableOpacity>
 </View>}
 </View>
-          {/* <TouchableOpacity
-            onPress={() => props.navigation.navigate('EditProfil')}
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: scale(10)
-            }}>
-            <SimpleLineIcons name='pencil' size={25} color={Colors.tabColor} />
-            <Text style={{
-              color: Colors.tabColor,
-              fontSize: scale(10),
-              fontWeight: 'bold',
-              marginTop: scale(2)
-            }} >
-              Modifier profil
-            </Text>
-          </TouchableOpacity> */}
+      
         </View>
       </View>
 
@@ -228,7 +238,7 @@ style={{height: 40, width: scale(100),flexDirection:'row', alignItems:'center',p
             fontWeight: 'bold',
             fontSize: scale(15)
           }}>
-            25
+            {friends.count}
           </Text>
           <View style={{ flexDirection: 'row' }}>
             <Ionicons name='people-outline' size={20} color={Colors.grey1} />
@@ -247,7 +257,7 @@ style={{height: 40, width: scale(100),flexDirection:'row', alignItems:'center',p
             fontWeight: 'bold',
             fontSize: scale(15)
           }}>
-            100
+            {locations.count}
           </Text>
           <View style={{ flexDirection: 'row' }}>
             <Ionicons name='heart-outline' size={20} color={Colors.grey1} />
@@ -285,7 +295,7 @@ style={{height: 40, width: scale(100),flexDirection:'row', alignItems:'center',p
                 Favourites
               </Text>
             </TabHeading>}>
-            <FavouriteComponent />
+            <FavouriteComponent navigation={props.navigation} data={locations} />
           </Tab>
           <Tab
             heading={<TabHeading style={{ backgroundColor: 'white' }}>
@@ -297,7 +307,7 @@ style={{height: 40, width: scale(100),flexDirection:'row', alignItems:'center',p
                 Friends
               </Text>
             </TabHeading>} >
-            <FriendsComponent />
+            <FriendsComponent navigation={props.navigation} data={friends} />
           </Tab>
         </Tabs>
 

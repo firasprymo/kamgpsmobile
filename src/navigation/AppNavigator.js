@@ -69,6 +69,16 @@ const contributionStack = createStackNavigator({
     navigationOptions: navOptionsHandler,
   },
 })
+const positionStack = createStackNavigator({
+  RequestPosition: {
+    screen: RequestPosition ,
+    navigationOptions: navOptionsHandler,
+  },
+  AddFriend: {
+    screen: AddFriend ,
+    navigationOptions: navOptionsHandler,
+  },
+})
 const profilStack = createStackNavigator({
   Profil: {
     screen: Profil,
@@ -100,14 +110,7 @@ const mapStack = createStackNavigator({
     screen: SelectPlace ,
     navigationOptions: navOptionsHandler,
   },
-  AddFriend: {
-    screen: AddFriend ,
-    navigationOptions: navOptionsHandler,
-  },
-  RequestPosition: {
-    screen: RequestPosition ,
-    navigationOptions: navOptionsHandler,
-  },
+  
 })
 const proximiteStack = createStackNavigator({
   Proximite: {
@@ -155,7 +158,7 @@ const homeStack = createBottomTabNavigator({
     navigationOptions: navOptionsHandler,
   },
   Position: {
-    screen: Position,
+    screen: positionStack,
     navigationOptions: navOptionsHandler,
   },
   Profil: {

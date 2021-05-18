@@ -8,9 +8,14 @@ const AppContextProvider = props => {
   const [userId, setUserId] = React.useState(props?.userId);
   const [token, _setToken ] = React.useState('');
   const [ markedPlace, setMarkedPlace] = React.useState({
-    latitude: 0,
-    longitude: 0,
+    lat: '',
+    lng: '',
   })
+  const [ selectedPlace, setSelectedPlace] = React.useState({
+    latitude: '',
+    longitude: '',
+  })
+
   useEffect(()=>{
     AsyncStorage.getItem('token').then(token=>{
       if (token) {
@@ -42,6 +47,8 @@ const AppContextProvider = props => {
         setToken,
         markedPlace,
         setMarkedPlace,
+        selectedPlace,
+        setSelectedPlace
         //countryCodeSim,
       }}>
       {props.children}

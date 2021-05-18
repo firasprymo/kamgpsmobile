@@ -5,13 +5,31 @@ import { Colors } from '../constants/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Images } from '../constants/Images';
-
+import { api } from '../constants/api_config';
 
 
 
 
 
 export default function SentFriendRequest(props) {
+
+    const cancel = () => {
+
+      var myHeaders = new Headers();
+      myHeaders.append("Authorization", `Bearer ${props.token}`);
+var requestOptions = {
+  method: 'DELETE',
+  headers: myHeaders,
+  redirect: 'follow'
+};
+
+fetch(`${api.url}friends/notification/${props.id}`, requestOptions)
+  .then(response => response.text())
+  .then(result => {
+    props.refresh()
+    console.log(result)})
+  .catch(error => console.log('error', error));
+    }
     return(
         <View style={{flexDirection:'row', width:width, height:scale(60),borderColor: Colors.grey3,borderBottomWidth:1,marginBottom:0.5}}>
             { props.status == 'accepted' && <View style={{flex:0.2,flexDirection:'column',alignItems:'center', justifyContent:'center'}}>
@@ -40,12 +58,12 @@ export default function SentFriendRequest(props) {
             <View style={{flex:0.6,flexDirection:'column',paddingVertical:scale(5)}}>
             <View style={{flex:0.5,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                   <Text style={{marginLeft:scale(10)}}>{props.name}</Text>
-                  <Text style={{marginRight:scale(20)}}>{props.phone} </Text>
+                  <Text style={{marginRight:scale(20)}}>+{props.phone} </Text>
             </View>
-            <View style={{flex:0.5,flexDirection:'row',paddingLeft:scale(5)}}>
+            <View style={{flex:0.5,flexDirection:'row',paddingLeft:scale(5),alignItems:'center'}}>
                 <MaterialCommunityIcons name='account-plus' size={scale(16)} color={Colors.logoBlue} />
                 <Text style={{color:'grey',marginLeft:scale(10),fontSize:scale(12)}} >Friend request</Text>
-                <Text style={{color:'grey',marginLeft:scale(10),fontSize:scale(12)}}>{props.date}</Text>
+                <Text style={{color:'grey',marginLeft:scale(10),fontSize:scale(10)}}>{props.date}</Text>
               </View>
             </View>
             <View style={{
@@ -56,7 +74,9 @@ export default function SentFriendRequest(props) {
             <View style={{flex:0.2,flexDirection:'column', justifyContent:'center',alignItems:'center'}}>
               
               { props.status != 'accepted' && 
-                    <TouchableOpacity style={{
+                    <TouchableOpacity 
+                    onPress={()=>{cancel()}}
+                    style={{
                             padding:scale(3),
                             alignItems:'center',
                             justifyContent:'center',

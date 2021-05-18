@@ -21,7 +21,7 @@ export default function WelcomPage(props) {
       AsyncStorage.getItem('token').then((token) => {
         if (token) {
           
-          
+          //console.log("token",token)
           var myHeaders = new Headers();
           myHeaders.append("Authorization", `Bearer ${token}`);
       
@@ -46,15 +46,17 @@ export default function WelcomPage(props) {
                   phone: result.data.data.phonenumber,
                 })
                 props.navigation.navigate('Home');
+              } else {
+                props.navigation.navigate('Auth');
               }
             })
             .catch(error => {
-              props.navigation.navigate('Home');
+              props.navigation.navigate('Auth');
               console.log('error', error)
             });
 
         } else {
-          props.navigation.navigate('Auth');
+          props.navigation.navigate('Introduction');
         }
       });
     } , 2000);

@@ -25,7 +25,7 @@ const apiKey = 'AIzaSyDfxAFFp8jEZrtWFxr8FTieAsUAlQhFhAs'
 
 export default function SelectPlace(props) {
 
-  const {setMarkedPlace} = useAppContext()
+  const {setMarkedPlace, setSelectedPlace} = useAppContext()
   const mapRef = React.createRef()
   const [marker, setMarker] = useState(true)
   const [userLocation, setUserLocation] = useState({
@@ -170,7 +170,7 @@ export default function SelectPlace(props) {
                 <GooglePlacesInput />
                 <TouchableOpacity
                     onPress={() => {
-                      setMarkedPlace(markedLocation)
+                      setSelectedPlace(markedLocation)
                       props.navigation.goBack()
                     }}
                     style={{ padding: scale(5) }}>

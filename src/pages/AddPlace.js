@@ -17,10 +17,10 @@ Geocoder.init(apiKey);
 export default function AddPlace(props) {
     
     const image = {uri : emptyphotouri}
-    const {markedPlace} = useAppContext()
+    const { selectedPlace} = useAppContext()
     const {token} = useAppContext()
-    const latitude = markedPlace.latitude
-    const longitude = markedPlace.longitude
+    const latitude = selectedPlace.latitude
+    const longitude = selectedPlace.longitude
     const [address, setAddress ] = useState('');
     const [photoChanged, setPhotoChanged] = useState(false)
     const [ name, setName ] = useState('')

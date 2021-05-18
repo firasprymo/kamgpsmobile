@@ -1,45 +1,18 @@
 import { Content } from 'native-base';
-import React from 'react';
+import React, { useState } from 'react';
 import { scale } from 'react-native-size-matters';
 import { Images } from '../constants/Images';
 import CardComponent from './CardComponent';
+import FriendCard from './FriendCard';
 
-const data = [
-    {
-        placeName: 'Steven',
-        duration: '30',
-        distance: '5.3',
-        photo: Images.user3,
-        id: "1",
-    },
-    {
-        placeName: 'Sarah',
-        duration: '37',
-        distance: '6.2',
-        photo: Images.user2,
-        id: "2",
-    },
-    {
-        placeName: 'Mark',
-        duration: '12',
-        distance: '3',
-        photo: Images.user3,
-        id: "3",
-    },
-    {
-        placeName: 'Layla',
-        duration: '44',
-        distance: '8.6',
-        photo: Images.user2,
-        id: "4",
-    },
-]
 
-export default function FriendsComponent() {
+export default function FriendsComponent(props) {
+    const [data, setData] = useState()
     return(
         <Content contentContainerStyle={{alignItems: 'center', padding:scale(10)}}>
-            {data.map((el)=>
-                <CardComponent key={el.id} type='friends' data={el} />
+            
+            {props.data.data.map((el)=>
+                <FriendCard key={el._id} userID={el._id} type='friends' navigation={props.navigation} data1={el} data={el.IDFriend} />
             )}
             
         </Content>

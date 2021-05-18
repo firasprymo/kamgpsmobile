@@ -10,20 +10,106 @@ import RecievedLocationRequest from '../components/RecievedLocationRequest';
 import RecievedFriendRequest from '../components/RecievedFriendRequest';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { api } from '../constants/api_config';
+import { useAppContext } from '../context/AppContext';
+import moment from 'moment';
+import socketIOClient from 'socket.io-client';
 
 const wait = (timeout) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
 }
 export default function Notification(props) {
 
+  const {token, currentUser} = useAppContext()
   const [ tab, setTab ] = useState('1')
   const [refreshing, setRefreshing] = React.useState(false);
+  const [ sentRequests, setSentRequests ] = React.useState([])
+  const [ recievedRequests, setRecievedRequest ] = useState([])
+
+
+  
+
+  const getData = (DATA) => {
+    const newSentRequests = []
+    const newRecievedRequests = []
+    const data = DATA.data.data
+    data.map((el)=>{
+      // console.log(el)
+      if (el.idSender.id == currentUser.id ) {
+        // console.log(el.idReciverd)
+        newSentRequests.push({
+        type: el.setLocationByfriend == 'location' ? 'location' : 'friend',
+        status: el.status=='accepter' ?'accepted': el.status == 'encours' ? 'waiting' : 'rejected',
+        date: moment(el.createdAt).fromNow() ,
+        name: el.idReciverd.name,
+        phone: el.idReciverd.phonenumber,
+        id: el._id,
+        lat: el.location.lat,
+        lng: el.location.lng
+      } )
+    } else {
+      // console.log(el.idSender)
+      newRecievedRequests.push({
+      type: el.setLocationByfriend == 'location' ? 'location' : 'friend',
+      status: el.status=='accepter' ?'accepted': el.status == 'encours' ? 'waiting' : 'rejected',
+      date: moment(el.createdAt).fromNow() ,
+      name: el.idSender.name,
+      phone: el.idSender.phonenumber,
+      id: el._id,
+      idfriend: el.idSender.id,
+    } )
+    }
+    })
+    setSentRequests(newSentRequests.reverse())
+    setRecievedRequest(newRecievedRequests.reverse())
+  }
+  const refresh = () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", `Bearer ${token}`);
+
+var raw = "";
+
+var requestOptions = {
+  method: 'GET',
+  headers: myHeaders,
+  body: raw,
+  redirect: 'follow'
+};
+
+fetch(`${api.url}friends/listeNotificationByUser`, requestOptions)
+  .then(response => response.json())
+  .then(result => {
+    // console.log(result)
+    getData(result)
+  })
+  .catch(error => console.log('error', error));
+  }
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
+    refresh()
     console.log('refreshing')
     wait(2000).then(() => setRefreshing(false));
   }, []);
+
+  useEffect(()=>{
+    refresh()
+    const socket = socketIOClient(api.url_SOC);
+    socket.on('data', data => {
+      console.log("notif socket : ",data)
+      if (data) {
+        refresh()
+        // const prevMessage = {
+        //   _id: data?._id,
+        //   text: data?.message,
+        //   createdAt: data?.createdAt,
+        //   user: {
+        //     _id: data?.sender,
+        //   },
+        // };
+      }
+    })
+  },[])
  
     return(
         <View style={{backgroundColor:'white', flex:1}}>
@@ -96,37 +182,6 @@ export default function Notification(props) {
                                 Envoyée
                             </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                    onPress={()=>props.navigation.navigate('RequestPosition')}
-                      style={{
-                        backgroundColor: Colors.logoBlue,
-                        width: scale(35),
-                        height:scale(30),
-                        justifyContent:'center',
-                        alignItems:'center',
-                        elevation:3,
-                        borderRadius: scale(5),
-                        marginLeft:scale(20)
-                    }}>
-                      <FontAwesome
-          name='location-arrow'
-          size={scale(20)}
-          color={Colors.white}/>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                    onPress={()=>props.navigation.navigate('AddFriend')}
-                      style={{
-                        backgroundColor: Colors.logoBlue,
-                        width: scale(35),
-                        height:scale(30),
-                        justifyContent:'center',
-                        alignItems:'center',
-                        elevation:3,
-                        borderRadius: scale(5),
-                        marginLeft:scale(10)
-                    }}>
-                      <MaterialCommunityIcons name='account-multiple-plus' color={Colors.white} size={scale(20)} />
-                    </TouchableOpacity>
       </View>
       <ScrollView
       refreshControl={
@@ -134,13 +189,13 @@ export default function Notification(props) {
           refreshing={refreshing}
           onRefresh={onRefresh} />}
       >
-        { tab=='2' && sentData.map((el,index)=> el.type == 'location' ?
-          <SentLocationRequest key={index} status={el.status} name={el.name} date={el.date} phone={el.phone } /> :
-          <SentFriendRequest key={index} status={el.status} name={el.name} date={el.date} phone={el.phone } />
+        { tab=='2' && sentRequests.map((el,index)=> el.type == 'location' ?
+          <SentLocationRequest refresh={refresh} navigation={props.navigation} key={el.id} token={token} id={el.id} {...el} /> :
+          <SentFriendRequest refresh={refresh} key={el.id} token={token} id={el.id} {...el} />
         ) }
-        { tab=='1' && recievedData.map((el,index)=> el.type == 'location' ?
-          <RecievedLocationRequest key={index} name={el.name} date={el.date} phone={el.phone } /> :
-          <RecievedFriendRequest key={index} name={el.name} date={el.date} phone={el.phone } />
+        { tab=='1' && recievedRequests.map((el,index)=> el.type == 'location' ?
+          <RecievedLocationRequest refresh={refresh} key={el.id} currentUser={currentUser} token={token} {...el} /> :
+          <RecievedFriendRequest refresh={refresh} key={el.id} currentUser={currentUser} token={token} {...el} />
         ) }
       </ScrollView>
         </View>
@@ -149,73 +204,3 @@ export default function Notification(props) {
 
 const { width, heigth } = Dimensions.get('screen')
 
-const sentData=[
-  { 
-    type:'location',
-    status:'accepted',
-    date:'Now',
-    name:'Abdesslam',
-    phone:'+216256655418'
-  },
-  {
-    type:'location',
-    status:'waiting',
-    date:'1 Hour ago',
-    name:'Layla',
-    phone:'+216266540117'
-  },
-  {
-    type:'location',
-    status:'rejected',
-    date:'2 Hours ago',
-    name:'Sarah',
-    phone:'+216266002218'
-  },
-  { 
-    type:'friend',
-    status:'accepted',
-    date:'Now',
-    name:'Abdesslam',
-    phone:'+216256655418'
-  },
-  {
-    type:'friend',
-    status:'waiting',
-    date:'1 Hour ago',
-    name:'Layla',
-    phone:'+216266540117'
-  },
-  {
-    type:'friend',
-    status:'rejected',
-    date:'2 Hours ago',
-    name:'Sarah',
-    phone:'+216266002218'
-  },
-]
-const recievedData = [
-  {
-    type:'location',
-    date:'1 Hour ago',
-    name:'Layla',
-    phone:'+216266540117'
-  },
-  {
-    type:'location',
-    date:'2 Hours ago',
-    name:'Sarah',
-    phone:'+216266002218'
-  },
-  {
-    type:'friend',
-    date:'1 Hour ago',
-    name:'Layla',
-    phone:'+216266540117'
-  },
-  {
-    type:'friend',
-    date:'2 Hours ago',
-    name:'Sarah',
-    phone:'+216266002218'
-  },
-]

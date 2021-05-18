@@ -1,6 +1,6 @@
 import { Card, Text } from 'native-base';
 import React from 'react';
-import { Alert, Image, TouchableOpacity, View } from 'react-native';
+import { Image, TouchableOpacity, View, Alert } from 'react-native';
 import { scale } from 'react-native-size-matters';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Colors } from '../constants/Colors';
@@ -9,13 +9,13 @@ import Dash from 'react-native-dash'
 import { api } from '../constants/api_config';
 import { useAppContext } from '../context/AppContext';
 
-export default function CardComponent({ data, navigation }) {
+export default function FriendCard({ data, navigation, userID }) {
 
-    const Radius = scale(10)
-    const Width = scale(110) 
-    const Height = scale(110)
+    const Radius = scale(100)
+    const Width = scale(90)
+    const Height = scale(90)
     const { setMarkedPlace, token } = useAppContext();
-    const removePlace = () => {
+    const removeFriend = () => {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", `Bearer ${token}`);
 var requestOptions = {
@@ -24,22 +24,23 @@ var requestOptions = {
   redirect: 'follow'
 };
 
-fetch(`${api.url}favorites/${data._id}`, requestOptions)
+fetch(`${api.url}friends/${userID}`, requestOptions)
   .then(response => response.text())
   .then(result => console.log(result))
   .catch(error => console.log('error', error));
     }
+
     const createTwoButtonAlert = () =>
     Alert.alert(
       "Confirmation",
-      `Êtes-vous sûr de vouloir supprimer ${data.name} de la list de favoris?`,
+      `Êtes-vous sûr de vouloir supprimer ${data.name} en tant qu'ami?`,
       [
         {
           text: "Non",
           onPress: () => console.log("Cancel Pressed"),
           style: "cancel"
         },
-        { text: "OUI", onPress: () => {removePlace()} }
+        { text: "OUI", onPress: () => {removeFriend()} }
       ]
     );
     return (
@@ -49,14 +50,15 @@ fetch(`${api.url}favorites/${data._id}`, requestOptions)
             borderRadius: scale(2),
             padding: scale(2),
             flexDirection: 'row',
-            alignItems: 'center',
+            alignItems: 'center'
         }}>
             <View style={{
                 flex: 0.7,
                 justifyContent: 'center',
                 alignItems: 'center'
             }}>
-                <Image source={ data.photo!='default.jpg' ? {uri: `${api.url_photo}Favorite/${data.photo}`} : Images.emptyphoto}
+                <Image 
+                    source={ data.photo!='default.jpg' ? {uri: `${api.url_photo}User/${data.photo}`} : Images.emptyprofil}
                     style={{
                         width: Width,
                         height: Height,
@@ -72,20 +74,20 @@ fetch(`${api.url}favorites/${data._id}`, requestOptions)
                 <View style={{
                     flexDirection: 'row',
                     flex: 1,
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    justifyContent:'space-between'
                 }}>
                     <Text style={{
                         marginLeft: scale(5),
-                        color: Colors.grey2,
-                        width: scale(100)
+                        color: Colors.grey2
                     }} >
                         {data.name}
                     </Text>
                     <TouchableOpacity
                         onPress={() => {
                             setMarkedPlace({
-                              lng:  parseFloat(data.location.lng),
-                              lat: parseFloat(data.location.lat),
+                              lng:  parseFloat(data.lat),
+                              lat: parseFloat(data.lng),
                               namee: data.name,
                             })
                             navigation.navigate('Maps')
@@ -95,8 +97,7 @@ fetch(`${api.url}favorites/${data._id}`, requestOptions)
                             source={Images.mapTabIcon2}
                             style={{
                                 width: scale(30),
-                                height: scale(30),
-                                tintColor:Colors.logoGreen
+                                height: scale(30)
                             }} />
                     </TouchableOpacity>
                 </View>
@@ -108,28 +109,18 @@ fetch(`${api.url}favorites/${data._id}`, requestOptions)
                 <View style={{ flexDirection: 'column', flex: 2, }}>
                 <Text style={{ color: Colors.grey1,  marginTop:scale(10), fontSize:scale(12), marginLeft:scale(5), width:scale(150) , height: scale(30)}}>
                     <Text style={{color: Colors.grey2, fontSize:scale(12), fontWeight:'bold'}}>Address: </Text>
-                    {data.addresse}
+                    {data.address}
                     </Text>
                     <View style={{
                             flexDirection:'row',
-                            justifyContent:'space-between',
+                            justifyContent:'flex-end',
                             alignItems:'center',
                             width:scale(150) ,
                             height: scale(40),
                             paddingHorizontal:scale(10)
                             }}>
-                            <TouchableOpacity style={{
-                                  width:scale(50),
-                                  height:scale(20),
-                                  borderWidth: 1,
-                                  borderColor:Colors.logoBlue,
-                                  borderRadius:scale(5),
-                                  justifyContent:'center',
-                                  alignItems: 'center',
-                                }}>
-                                <Text style={{color:Colors.logoBlue}}>Edit</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
+                           
+                            <TouchableOpacity 
                             onPress={()=>{createTwoButtonAlert()}}
                             style={{
                                 width:scale(50),

@@ -19,23 +19,38 @@ import DirectionInfo from '../components/DirectionInfo';
 import SendPosition from '../components/SendPosition';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapViewDirections from 'react-native-maps-directions';
+import { useAppContext } from '../context/AppContext';
 
 const apiKey = 'AIzaSyDfxAFFp8jEZrtWFxr8FTieAsUAlQhFhAs'
 Geocoder.init(apiKey);
 const types = ['', 'WALKING', 'DRIVING', 'BICYCLING']
 
-export default function Maps(props) {
+const getPoints = (from, to) => {
+  let points = []
+  let a = from.lat - to.lat
+  let b = from.lng - to.lng
+  let distance = Math.ceil(111.2 * Math.sqrt( (a)^2 + (b)^2 ))
+  for (i=1; i<distance + 1; i++) {
+    points.push({
+      lat:from.lat - (a*i/distance),
+      lng:from.lng - (b*i/distance),
+    })
+  }
+  return points
+}
 
+export default function Maps(props) {
+  const {markedPlace, setMarkedPlace} = useAppContext()
   const [searchType, setSearchType] = useState(true)
   const [directionValues, setDirectionsValues] = useState({
     distance: '',
     duration: [],
   })
-  const [ searchInput, setSearchInput ] = useState('')
-  const [directionType, setDirectionType] = useState('1')
+  const [searchInput, setSearchInput] = useState('')
+  const [directionType, setDirectionType] = useState('2')
   const mapRef = React.createRef()
   const [directionVisible, setDirectionVisible] = useState(false);
-  const [ itineraireVisible, setItineraireVisible ] = useState(false);
+  const [itineraireVisible, setItineraireVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [marker, setMarker] = useState(false)
   const [userLocation, setUserLocation] = useState({
@@ -54,23 +69,50 @@ export default function Maps(props) {
   })
 
   useEffect(() => {
+    //setMarkedPlace({})
+    console.log('efec')
     //props.navigation.navigate('SavePlace')
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
       timeout: 15000,
     })
       .then(location => {
-        //console.log(location);
+        console.log(location);
         setUserLocation(location)
         setRegion(location)
-      })
+      }
+      )
       .catch(error => {
         const { code, message } = error;
         //console.warn(code, message);
         alert('activate your GPS for user experience')
       })
+      // return( ()=> {
+      //   setDirectionVisible(false)
+      //   setMarker(false)
+      // }
+      // )
   }, [])
+  useEffect(()=> {
+    if(markedPlace.lat!= ''){
+      setDirectionVisible(true)
+      setMarkedLocation({
+        latitude: markedPlace.lat,
+        longitude: markedPlace.lng,
+        photoRef:'',
+        address: markedPlace.namee ? markedPlace.namee :'Friend location'
+      })
+      setMarker(true)
+      setRegion({
+        latitude: markedPlace.lat ,
+        longitude: markedPlace.lng,
+      })
+      //setMarkedPlace({lat: null})
+     
 
+    }
+  },[markedPlace])
+  
 
   const GooglePlacesInput = () => {
     return (
@@ -78,7 +120,7 @@ export default function Maps(props) {
         fetchDetails
         placeholder='Search address'
         onPress={(data, details = null) => {
-           console.log('data = ', data.structured_formatting.main_text)
+          // console.log('data = ', data.structured_formatting.main_text)
           // console.log('details = ', details)
           Geocoder.from(data.description)
             .then(json => {
@@ -89,7 +131,7 @@ export default function Maps(props) {
                 latitude: location.lat,
                 longitude: location.lng,
                 address: data.description,
-                photoRef: details.photos!=undefined ? details.photos[0].photo_reference : '',
+                photoRef: details.photos != undefined ? details.photos[0].photo_reference : '',
                 name: data.structured_formatting.main_text,
               })
               setRegion({
@@ -111,10 +153,12 @@ export default function Maps(props) {
       />
     );
   };
-  
+
   const toggleItineraire = () => {
     setItineraireVisible(!itineraireVisible)
   }
+
+  
 
   return (
     <View style={styles.mapcontainer}>
@@ -128,42 +172,42 @@ export default function Maps(props) {
         region={{
           latitude: region.latitude,
           longitude: region.longitude,
-          latitudeDelta: 0.015,
+          latitudeDelta: 0.055,
           longitudeDelta: 0.0121,
         }}
 
         showUserLocation={true} >
-        
-          <MapViewDirections
-            timePrecision='now'
-            mode={types[directionType]}
-            origin={userLocation}
-            destination={markedLocation}
-            apikey={apiKey}
-            strokeWidth={ itineraireVisible ? 4 : 0}
-            strokeColor='#2ad41e'
-            onReady={result => {
-              setDirectionsValues({
-                distance: result.distance.toFixed(2),
-                duration: [
-                  Math.trunc(result.duration / 1440),
-                  Math.trunc((result.duration % 1440) / 60),
-                  (result.duration % 60).toFixed(0)
-                    ]
-              })
-              try {
-                mapRef.current.fitToCoordinates(result.coordinates, {
-                  edgePadding: {
-                    right: (width / 20),
-                    bottom: (height / 20),
-                    left: (width / 20),
-                    top: (height / 20),
-                  }
-                });
-              }
-              catch { error => console.log(error) }
-            }}
-          />
+
+        { directionVisible && <MapViewDirections
+          timePrecision='now'
+          mode={types[directionType]}
+          origin={userLocation}
+          destination={markedLocation}
+          apikey={apiKey}
+          strokeWidth={itineraireVisible ? 4 : 0}
+          strokeColor='#2ad41e'
+          onReady={result => {
+            setDirectionsValues({
+              distance: result.distance.toFixed(2),
+              duration: [
+                Math.trunc(result.duration / 1440),
+                Math.trunc((result.duration % 1440) / 60),
+                (result.duration % 60).toFixed(0)
+              ]
+            })
+            try {
+              mapRef.current.fitToCoordinates(result.coordinates, {
+                edgePadding: {
+                  right: (width / 20),
+                  bottom: (height / 20),
+                  left: (width / 20),
+                  top: (height / 20),
+                }
+              });
+            }
+            catch { error => console.log(error) }
+          }}
+        />}
         {marker && <Marker coordinate={{
           latitude: markedLocation.latitude,
           longitude: markedLocation.longitude,
@@ -241,7 +285,12 @@ export default function Maps(props) {
         flexDirection: 'column'
       }}>
         <TouchableOpacity
-          onPress={() => setModalVisible(true)}
+          onPress={() => {
+            setDirectionVisible(false)
+            setMarker(false)
+            setItineraireVisible(false)
+            //setModalVisible(true)
+          }}
           style={{
             width: scale(50),
             height: scale(50),
@@ -268,7 +317,7 @@ export default function Maps(props) {
               .catch(error => {
                 const { code, message } = error;
                 //console.warn(code, message);
-                if (code != 'CANCELLED'){
+                if (code != 'CANCELLED') {
                   alert('activate your GPS for user experience')
                 }
               })
@@ -285,14 +334,18 @@ export default function Maps(props) {
             color={directionVisible ? Colors.tabColor : Colors.grey1} />
         </TouchableOpacity>
       </View>
-     
-        <DirectionInfo
+
+      <DirectionInfo
         navigation={props.navigation}
         type="location"
         toggleItineraire={toggleItineraire}
         from={userLocation}
         to={markedLocation}
-        close={() => setDirectionVisible(false)}
+        close={() => {
+          setMarkedPlace({lat:'',lng:''})
+          setItineraireVisible(false)
+          setDirectionVisible(false)
+        }}
         visible={directionVisible}
         directionType={directionType}
         setDirectionType={setDirectionType}

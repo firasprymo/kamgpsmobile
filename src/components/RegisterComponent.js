@@ -27,7 +27,7 @@ Geocoder.init(apiKey);
 export default function RegisterComponent(props) {
 
   const [ deviceId, setDeviceID ] = useState('')
-  const [countryCode, setCountryCode] = useState('')
+  const [countryCode, setCountryCode] = useState('216')
   const [isLoading, setIsLoading] = useState(false)
   const [errorFromServer, setErrorFromServer] = useState('')
   const [codeInput, setCodeInput] = useState(false)

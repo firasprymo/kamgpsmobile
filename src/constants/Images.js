@@ -42,7 +42,7 @@ export const Images = {
     emptyprofil: require('../assets/background/emptyprofil.png'),
     myplace: require('../assets/background/myplace.png'),
     emptyphoto: require('../assets/background/emptyphoto.jpg'),
-    arrow: require('../assets/background/locationarrow.png'),
+    // arrow: require('../assets/background/locationarrow.png'),
     pharmacie1: require('../assets/background/pharmacie1.jpeg'),
     pharmacie2: require('../assets/background/pharmacie2.jpeg'),
   };
