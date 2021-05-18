@@ -20,27 +20,16 @@ import SendPosition from '../components/SendPosition';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapViewDirections from 'react-native-maps-directions';
 import { useAppContext } from '../context/AppContext';
+import NearPlacesMarkers from '../components/NearPlacesMarkers';
 
 const apiKey = 'AIzaSyDfxAFFp8jEZrtWFxr8FTieAsUAlQhFhAs'
 Geocoder.init(apiKey);
 const types = ['', 'WALKING', 'DRIVING', 'BICYCLING']
 
-const getPoints = (from, to) => {
-  let points = []
-  let a = from.lat - to.lat
-  let b = from.lng - to.lng
-  let distance = Math.ceil(111.2 * Math.sqrt( (a)^2 + (b)^2 ))
-  for (i=1; i<distance + 1; i++) {
-    points.push({
-      lat:from.lat - (a*i/distance),
-      lng:from.lng - (b*i/distance),
-    })
-  }
-  return points
-}
+
 
 export default function Maps(props) {
-  const {markedPlace, setMarkedPlace} = useAppContext()
+  const { markedPlace, setMarkedPlace } = useAppContext()
   const [searchType, setSearchType] = useState(true)
   const [directionValues, setDirectionsValues] = useState({
     distance: '',
@@ -87,32 +76,32 @@ export default function Maps(props) {
         //console.warn(code, message);
         alert('activate your GPS for user experience')
       })
-      // return( ()=> {
-      //   setDirectionVisible(false)
-      //   setMarker(false)
-      // }
-      // )
+    // return( ()=> {
+    //   setDirectionVisible(false)
+    //   setMarker(false)
+    // }
+    // )
   }, [])
-  useEffect(()=> {
-    if(markedPlace.lat!= ''){
+  useEffect(() => {
+    if (markedPlace.lat != '') {
       setDirectionVisible(true)
       setMarkedLocation({
         latitude: markedPlace.lat,
         longitude: markedPlace.lng,
-        photoRef:'',
-        address: markedPlace.namee ? markedPlace.namee :'Friend location'
+        photoRef: '',
+        address: markedPlace.namee ? markedPlace.namee : 'Friend location'
       })
       setMarker(true)
       setRegion({
-        latitude: markedPlace.lat ,
+        latitude: markedPlace.lat,
         longitude: markedPlace.lng,
       })
       //setMarkedPlace({lat: null})
-     
+
 
     }
-  },[markedPlace])
-  
+  }, [markedPlace])
+
 
   const GooglePlacesInput = () => {
     return (
@@ -137,8 +126,8 @@ export default function Maps(props) {
               setRegion({
                 latitude: location.lat,
                 longitude: location.lng,
-                latitudeDelta: 0.015,
-                longitudeDelta: 0.0121,
+                latitudeDelta: 2*Math.abs(location.lat-userLocation.latitude),
+                longitudeDelta: 2*Math.abs(location.lng-userLocation.longitude),
               })
               setDirectionVisible(true)
             })
@@ -158,7 +147,7 @@ export default function Maps(props) {
     setItineraireVisible(!itineraireVisible)
   }
 
-  
+
 
   return (
     <View style={styles.mapcontainer}>
@@ -172,13 +161,13 @@ export default function Maps(props) {
         region={{
           latitude: region.latitude,
           longitude: region.longitude,
-          latitudeDelta: 0.055,
-          longitudeDelta: 0.0121,
+          latitudeDelta: region.latitudeDelta ? region.latitudeDelta : 0.055,
+          longitudeDelta: region.longitudeDelta ? region.longitudeDelta : 0.0121,
         }}
 
         showUserLocation={true} >
 
-        { directionVisible && <MapViewDirections
+        {directionVisible && <MapViewDirections
           timePrecision='now'
           mode={types[directionType]}
           origin={userLocation}
@@ -226,6 +215,11 @@ export default function Maps(props) {
             }}
           />
         </Marker>
+
+        <NearPlacesMarkers
+          from={userLocation}
+          to={markedLocation}
+        />
 
       </MapView>
       <View style={styles.header}>
@@ -284,7 +278,7 @@ export default function Maps(props) {
         height: scale(100),
         flexDirection: 'column'
       }}>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => {
             setDirectionVisible(false)
             setMarker(false)
@@ -302,7 +296,7 @@ export default function Maps(props) {
             name='location-arrow'
             size={scale(40)}
             color={directionVisible ? Colors.tabColor : Colors.grey1} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity
           onPress={() => {
             GetLocation.getCurrentPosition({
@@ -342,7 +336,7 @@ export default function Maps(props) {
         from={userLocation}
         to={markedLocation}
         close={() => {
-          setMarkedPlace({lat:'',lng:''})
+          setMarkedPlace({ lat: '', lng: '' })
           setItineraireVisible(false)
           setDirectionVisible(false)
         }}

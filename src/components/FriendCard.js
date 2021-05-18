@@ -18,13 +18,18 @@ export default function FriendCard({ data, navigation, userID }) {
     const removeFriend = () => {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", `Bearer ${token}`);
-var requestOptions = {
-  method: 'DELETE',
-  headers: myHeaders,
-  redirect: 'follow'
-};
+        myHeaders.append("Content-Type", "application/json");
 
-fetch(`${api.url}friends/${userID}`, requestOptions)
+        var raw = JSON.stringify({"IDFriend":data.id});
+        
+        var requestOptions = {
+          method: 'DELETE',
+          headers: myHeaders,
+          body: raw,
+          redirect: 'follow'
+        };
+
+fetch(`${api.url}friends/delete`, requestOptions)
   .then(response => response.text())
   .then(result => console.log(result))
   .catch(error => console.log('error', error));
