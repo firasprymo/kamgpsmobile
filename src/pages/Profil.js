@@ -295,7 +295,7 @@ style={{height: 40, width: scale(100),flexDirection:'row', alignItems:'center',p
                 Favourites
               </Text>
             </TabHeading>}>
-            <FavouriteComponent navigation={props.navigation} data={locations} />
+            <FavouriteComponent refresh={refreshdata} navigation={props.navigation} data={locations} />
           </Tab>
           <Tab
             heading={<TabHeading style={{ backgroundColor: 'white' }}>
@@ -307,7 +307,7 @@ style={{height: 40, width: scale(100),flexDirection:'row', alignItems:'center',p
                 Friends
               </Text>
             </TabHeading>} >
-            <FriendsComponent navigation={props.navigation} data={friends} />
+            <FriendsComponent refresh={refreshdata} navigation={props.navigation} data={friends} />
           </Tab>
         </Tabs>
 

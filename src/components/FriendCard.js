@@ -9,7 +9,7 @@ import Dash from 'react-native-dash'
 import { api } from '../constants/api_config';
 import { useAppContext } from '../context/AppContext';
 
-export default function FriendCard({ data, navigation, userID }) {
+export default function FriendCard({ data, navigation, refresh }) {
 
     const Radius = scale(100)
     const Width = scale(90)
@@ -20,34 +20,37 @@ export default function FriendCard({ data, navigation, userID }) {
         myHeaders.append("Authorization", `Bearer ${token}`);
         myHeaders.append("Content-Type", "application/json");
 
-        var raw = JSON.stringify({"IDFriend":data.id});
-        
+        var raw = JSON.stringify({ "IDFriend": data.id });
+
         var requestOptions = {
-          method: 'DELETE',
-          headers: myHeaders,
-          body: raw,
-          redirect: 'follow'
+            method: 'DELETE',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
         };
 
-fetch(`${api.url}friends/delete`, requestOptions)
-  .then(response => response.text())
-  .then(result => console.log(result))
-  .catch(error => console.log('error', error));
+        fetch(`${api.url}friends/delete`, requestOptions)
+            .then(response => response.text())
+            .then(result => {
+                refresh()
+                console.log(result)
+            })
+            .catch(error => console.log('error', error));
     }
 
     const createTwoButtonAlert = () =>
-    Alert.alert(
-      "Confirmation",
-      `Êtes-vous sûr de vouloir supprimer ${data.name} en tant qu'ami?`,
-      [
-        {
-          text: "Non",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
-        },
-        { text: "OUI", onPress: () => {removeFriend()} }
-      ]
-    );
+        Alert.alert(
+            "Confirmation",
+            `Êtes-vous sûr de vouloir supprimer ${data.name} en tant qu'ami?`,
+            [
+                {
+                    text: "Non",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                { text: "OUI", onPress: () => { removeFriend() } }
+            ]
+        );
     return (
         <Card style={{
             height: scale(120),
@@ -62,8 +65,8 @@ fetch(`${api.url}friends/delete`, requestOptions)
                 justifyContent: 'center',
                 alignItems: 'center'
             }}>
-                <Image 
-                    source={ data.photo!='default.jpg' ? {uri: `${api.url_photo}User/${data.photo}`} : Images.emptyprofil}
+                <Image
+                    source={data.photo != 'default.jpg' ? { uri: `${api.url_photo}User/${data.photo}` } : Images.emptyprofil}
                     style={{
                         width: Width,
                         height: Height,
@@ -80,7 +83,7 @@ fetch(`${api.url}friends/delete`, requestOptions)
                     flexDirection: 'row',
                     flex: 1,
                     alignItems: 'center',
-                    justifyContent:'space-between'
+                    justifyContent: 'space-between'
                 }}>
                     <Text style={{
                         marginLeft: scale(5),
@@ -91,12 +94,12 @@ fetch(`${api.url}friends/delete`, requestOptions)
                     <TouchableOpacity
                         onPress={() => {
                             setMarkedPlace({
-                              lng:  parseFloat(data.lat),
-                              lat: parseFloat(data.lng),
-                              namee: data.name,
+                                lng: parseFloat(data.lat),
+                                lat: parseFloat(data.lng),
+                                namee: data.name,
                             })
                             navigation.navigate('Maps')
-                          }}
+                        }}
                         style={{ margin: scale(15) }}>
                         <Image
                             source={Images.mapTabIcon2}
@@ -112,32 +115,32 @@ fetch(`${api.url}friends/delete`, requestOptions)
                     dashColor={Colors.tabColor}
                     style={{ width: scale(160), height: 1 }} />
                 <View style={{ flexDirection: 'column', flex: 2, }}>
-                <Text style={{ color: Colors.grey1,  marginTop:scale(10), fontSize:scale(12), marginLeft:scale(5), width:scale(150) , height: scale(30)}}>
-                    <Text style={{color: Colors.grey2, fontSize:scale(12), fontWeight:'bold'}}>Address: </Text>
-                    {data.address}
+                    <Text style={{ color: Colors.grey1, marginTop: scale(10), fontSize: scale(12), marginLeft: scale(5), width: scale(150), height: scale(30) }}>
+                        <Text style={{ color: Colors.grey2, fontSize: scale(12), fontWeight: 'bold' }}>Address: </Text>
+                        {data.address}
                     </Text>
                     <View style={{
-                            flexDirection:'row',
-                            justifyContent:'flex-end',
-                            alignItems:'center',
-                            width:scale(150) ,
-                            height: scale(40),
-                            paddingHorizontal:scale(10)
-                            }}>
-                           
-                            <TouchableOpacity 
-                            onPress={()=>{createTwoButtonAlert()}}
+                        flexDirection: 'row',
+                        justifyContent: 'flex-end',
+                        alignItems: 'center',
+                        width: scale(150),
+                        height: scale(40),
+                        paddingHorizontal: scale(10)
+                    }}>
+
+                        <TouchableOpacity
+                            onPress={() => { createTwoButtonAlert() }}
                             style={{
-                                width:scale(50),
-                                height:scale(20),
+                                width: scale(50),
+                                height: scale(20),
                                 borderWidth: 1,
-                                borderColor:Colors.red,
-                                borderRadius:scale(5),
-                                justifyContent:'center',
+                                borderColor: Colors.red,
+                                borderRadius: scale(5),
+                                justifyContent: 'center',
                                 alignItems: 'center',
-                                }}>
-                                <Text style={{color:Colors.red}}>Delete</Text>
-                            </TouchableOpacity>
+                            }}>
+                            <Text style={{ color: Colors.red }}>Delete</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </View>

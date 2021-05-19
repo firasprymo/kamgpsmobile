@@ -65,7 +65,7 @@ export default function RecievedLocationRequest(props) {
                 var raw = JSON.stringify({
                     "phonenumber": props.phone,
                     "app_id": "157c4da9-c189-439a-b76c-f4bf32edaba2",
-                    "contents": { "en": `${props.currentUser.name} a ${response} votre demande de localisation` },
+                    "contents": { "en": `${props.currentUser.username} a ${response} votre demande de localisation` },
                     "headings": {
                         "en": `Votre demande a était ${response}`
                     }

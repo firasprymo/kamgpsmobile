@@ -13,7 +13,13 @@ export default function FavouriteComponent(props) {
     return(
         <Content contentContainerStyle={{alignItems: 'center', padding:scale(10), flexDirection:'column-reverse'}}>
             {props.data.data.map((el)=>
-                <CardComponent key={el._id} navigation={props.navigation} type='favourite' data={el}/>
+                <CardComponent
+                    key={el._id}
+                    navigation={props.navigation}
+                    type='favourite'
+                    refresh={props.refresh}
+                    data={el}
+                    />
             )}
             
         </Content>

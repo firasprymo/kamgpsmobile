@@ -172,7 +172,6 @@ export default function DirectionInfo(props) {
                                 longitude: props.to.longitude,
                                 photo: image,
                                 })
-                            console.log(image)
                             }}
                         style={{
                             width: scale(100),

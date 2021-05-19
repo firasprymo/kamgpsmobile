@@ -92,6 +92,14 @@ const profilStack = createStackNavigator({
     screen: Payment ,
     navigationOptions: navOptionsHandler,
   },
+  EditPlace: {
+    screen: EditPlace ,
+    navigationOptions: navOptionsHandler,
+  },
+  SelectPlace: {
+    screen: SelectPlace ,
+    navigationOptions: navOptionsHandler,
+  },
 })
 const mapStack = createStackNavigator({
   Maps: {

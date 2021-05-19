@@ -12,7 +12,15 @@ export default function FriendsComponent(props) {
         <Content contentContainerStyle={{alignItems: 'center', padding:scale(10)}}>
             
             {props.data.data.map((el)=>
-                <FriendCard key={el._id} userID={el._id} type='friends' navigation={props.navigation} data1={el} data={el.IDFriend} />
+                <FriendCard
+                    key={el._id}
+                    userID={el._id}
+                    refresh={props.refresh}
+                    type='friends'
+                    navigation={props.navigation}
+                    data1={el}
+                    data={el.IDFriend}
+                    />
             )}
             
         </Content>

@@ -35,10 +35,11 @@ const getPoints = (from, to) => {
 export default function NearPlacesMarkers(props) {
 
     const { token } = useAppContext();
-    const [points,setPoints] = useState( getPoints(props.from, props.to))
-    const [places,setPlaces] = useState([])
-        useEffect(() => {
-        
+    const [points, setPoints] = useState(getPoints(props.from, props.to))
+    const [places, setPlaces] = useState([])
+
+    useEffect(() => {
+
         var myHeaders = new Headers();
         myHeaders.append("Authorization", `Bearer ${token}`);
         myHeaders.append("Content-Type", "application/json");
@@ -52,42 +53,45 @@ export default function NearPlacesMarkers(props) {
             redirect: 'follow'
         };
 
-        if(points!=[]) { fetch(`${api.url}maps/listePlaceDirection`, requestOptions)
+        if (points != []) {
+            fetch(`${api.url}maps/listePlaceDirection`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 setPlaces(result.data)
-                console.log(result)})
-            .catch(error => console.log('error', error));}
+                console.log(result)
+            })
+            .catch(error => console.log('error', error));
+        }
 
     }, [props.to])
     return (
         <View>
-            { places != [] && places.map((el) => 
-            <Marker
-            pressed
-            title={el.name}
-            key={el.lat}
-            coordinate={{
-                latitude: parseFloat(el.location.lat),
-                longitude: parseFloat(el.location.lng),
-            }} >
-                {/* <FontAwesome5
+            { places && places.map((el) =>
+                <Marker
+                    pressed
+                    title={el.name}
+                    key={el.lat}
+                    coordinate={{
+                        latitude: parseFloat(el.location.lat),
+                        longitude: parseFloat(el.location.lng),
+                    }} >
+                    {/* <FontAwesome5
             name='store-alt'
             size={25}
             color={Colors.tabColor}
           /> */}
-          <View style={{width:scale(40),height:scale(40), borderRadius:scale(5), elevation:5, borderWidth:1,borderColor:'white'}}>
-          <Image source={ el.photo!='default.jpg' ? {uri: `${api.url_photo}Favorite/${el.photo}`} : Images.emptyphoto}
-          resizeMode='stretch'
-                    style={{
-                        width: scale(40),
-                        height: scale(40),
-                        borderRadius:scale(5)
-                    }}
-                />
-          </View>
-          
-            </Marker>
+                    <View style={{ width: scale(40), height: scale(40), borderRadius: scale(5), elevation: 5, borderWidth: 1, borderColor: 'white' }}>
+                        <Image source={el.photo != 'default.jpg' ? { uri: `${api.url_photo}Favorite/${el.photo}` } : Images.emptyphoto}
+                            resizeMode='stretch'
+                            style={{
+                                width: scale(40),
+                                height: scale(40),
+                                borderRadius: scale(5)
+                            }}
+                        />
+                    </View>
+
+                </Marker>
             )}
         </View>
     )
