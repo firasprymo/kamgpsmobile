@@ -24,7 +24,7 @@ import { api } from './src/constants/api_config';
 import OneSignal from 'react-native-onesignal';
 
 //   console.disableYellowBox = true;
-// LogBox.ignoreAllLogs()
+ //     LogBox.ignoreAllLogs()
 
  export const queryClient = new QueryClient();
  function onIds(device){

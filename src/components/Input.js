@@ -55,7 +55,7 @@ export default function Input(props) {
       </View>
       { props.errorMessage == '' ?
         <View style={{ marginBottom: scale(17) }}></View> :
-        <Text style={{ color: Colors.red, marginLeft: scale(10) }} >{props.errorMessage}</Text>}
+        <Text style={{ color: Colors.red, marginLeft: scale(10), fontSize: scale(12) }} >{props.errorMessage}</Text>}
     </View>
   );
 }
@@ -71,7 +71,8 @@ const styles = StyleSheet.create(
       flex: 1,
       paddingLeft: scale(10),
       color: 'white',
-      fontSize: scale(12)
+      fontSize: scale(12),
+      height:scale(50)
     }
   }
 )

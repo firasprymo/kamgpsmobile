@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Text, View } from 'react-native';
+import { Dimensions, ScrollView, Text, View } from 'react-native';
 import { scale } from 'react-native-size-matters';
 import { Colors } from '../constants/Colors';
 
@@ -26,6 +26,7 @@ export default function Historique(props) {
           Historique
               </Text>
       </View>
+      
         </View>
     )
 }

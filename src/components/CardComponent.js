@@ -79,7 +79,8 @@ export default function CardComponent({ data, navigation, refresh }) {
                     <Text style={{
                         marginLeft: scale(5),
                         color: Colors.grey2,
-                        width: scale(100)
+                        width: scale(100),
+                        fontSize: scale(13)
                     }} >
                         {data.name}
                     </Text>
@@ -108,7 +109,7 @@ export default function CardComponent({ data, navigation, refresh }) {
                     dashColor={Colors.tabColor}
                     style={{ width: scale(160), height: 1 }} />
                 <View style={{ flexDirection: 'column', flex: 2, }}>
-                    <Text style={{ color: Colors.grey1, marginTop: scale(10), fontSize: scale(12), marginLeft: scale(5), width: scale(150), height: scale(30) }}>
+                    <Text style={{ color: Colors.grey1, marginTop: scale(5), fontSize: scale(12), marginLeft: scale(5), width: scale(150), height: scale(35) }}>
                         <Text style={{ color: Colors.grey2, fontSize: scale(12), fontWeight: 'bold' }}>Address: </Text>
                         {data.addresse}
                     </Text>
@@ -117,8 +118,9 @@ export default function CardComponent({ data, navigation, refresh }) {
                         justifyContent: 'space-between',
                         alignItems: 'center',
                         width: scale(150),
-                        height: scale(40),
-                        paddingHorizontal: scale(10)
+                        height: scale(28),
+                        paddingHorizontal: scale(10),
+                        marginTop: scale(5),
                     }}>
                         <TouchableOpacity
                         onPress={()=>{
@@ -142,7 +144,7 @@ export default function CardComponent({ data, navigation, refresh }) {
                             justifyContent: 'center',
                             alignItems: 'center',
                         }}>
-                            <Text style={{ color: Colors.logoBlue }}>Edit</Text>
+                            <Text style={{ color: Colors.logoBlue, fontSize:scale(12) }}>Edit</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={() => { createTwoButtonAlert() }}
@@ -155,7 +157,7 @@ export default function CardComponent({ data, navigation, refresh }) {
                                 justifyContent: 'center',
                                 alignItems: 'center',
                             }}>
-                            <Text style={{ color: Colors.red }}>Delete</Text>
+                            <Text style={{ color: Colors.red, fontSize: scale(12) }}>Delete</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

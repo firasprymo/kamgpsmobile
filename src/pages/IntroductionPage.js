@@ -17,7 +17,7 @@ export default function IntroductionPage(props) {
     <Box flex={1}>
       <StatusBar hidden />
       <ImageBackground source={Images.introductionBackground} style={styles.background}>
-        <Logo style={{ marginTop: scale(20) }} />
+        <Logo style={{ marginTop: scale(20), marginBottom:3 }} />
         <Swiper
           loop={false}
           autoplay
@@ -106,8 +106,8 @@ const styles = StyleSheet.create({
     height: height * 0.40,
   },
   skip: {
-    marginBottom: scale(10),
     marginTop: scale(60),
+    marginBottom: scale(10),
     color: Colors.white,
 
 

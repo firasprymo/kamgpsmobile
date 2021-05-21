@@ -172,7 +172,8 @@ fetch(`${api.url}favorites/AjouterFavorite`, requestOptions)
                         }}>
                             <Text style={{
                                         color: category=='Restaurant' ? 'white' : 'grey',
-                                        fontWeight:'bold'
+                                        fontWeight:'bold',
+                                        fontSize:scale(12)
                                     }}>
                                 Restaurant
                             </Text>
@@ -189,7 +190,8 @@ fetch(`${api.url}favorites/AjouterFavorite`, requestOptions)
                         }}>
                             <Text style={{
                                         color: category=='Boutique' ? 'white' : 'grey',
-                                        fontWeight:'bold'
+                                        fontWeight:'bold',
+                                        fontSize:scale(12)
                                     }}>
                                 Boutique
                             </Text>
@@ -206,7 +208,8 @@ fetch(`${api.url}favorites/AjouterFavorite`, requestOptions)
                         }}>
                             <Text style={{
                                         color: category=='Service' ? 'white' : 'grey',
-                                        fontWeight:'bold'
+                                        fontWeight:'bold',
+                                        fontSize:scale(12)
                                     }}>
                                 Service
                             </Text>
@@ -223,7 +226,8 @@ fetch(`${api.url}favorites/AjouterFavorite`, requestOptions)
                         }}>
                             <Text style={{
                                         color: category=='Other' ? 'white' : 'grey',
-                                        fontWeight:'bold'
+                                        fontWeight:'bold',
+                                        fontSize:scale(12)
                                     }}>
                                 Other
                             </Text>

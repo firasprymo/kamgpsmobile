@@ -190,6 +190,7 @@ export default function EditProfil(props) {
       fetch(`${api.url}users/updateMe`, requestOptions)
         .then(response => response.json())
         .then(result => {
+          console.log("update user = ",result)
           setSuccessMessage(true)
           setIsLoading(false)
         })
@@ -206,8 +207,8 @@ export default function EditProfil(props) {
       setUsernameErrorMessage("This field is required")
       return false
     }
-    else if (username.length < 8) {
-      setUsernameErrorMessage('8 characters minimum')
+    else if (username.length < 3) {
+      setUsernameErrorMessage('3 characters minimum')
       return false
     }
     else {

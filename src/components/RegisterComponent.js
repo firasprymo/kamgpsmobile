@@ -214,8 +214,8 @@ export default function RegisterComponent(props) {
       setUsernameErrorMessage("This field is required")
       return false
     }
-    else if (username.length < 8) {
-      setUsernameErrorMessage('8 characters minimum')
+    else if (username.length < 3) {
+      setUsernameErrorMessage('3 characters minimum')
       return false
     }
     else {

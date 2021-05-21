@@ -99,10 +99,11 @@ export default function LoginComponent(props) {
         .catch(error => console.log(error))
   }
   const handelLoginBtn = () => {
-    setIsLoading(true)
+    
     checkPhone(phoneNumber)
     checkPassword(password)
     if (checkPhone(phoneNumber) && checkPassword(password)) {
+      setIsLoading(true)
       var myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
 
@@ -129,7 +130,6 @@ export default function LoginComponent(props) {
           }
           else if (result.message){
             setGlobalError(result.message)
-            setIsLoading(false)
           }
         })
         .catch(error => {
@@ -138,7 +138,7 @@ export default function LoginComponent(props) {
           setIsLoading(false)
         });
     }
-    else setIsLoading(false)
+    
   }
   // ++++++++++++++++++++++ login Handle +++++++++++++++++++++++++++++++++++++
 

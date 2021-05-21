@@ -19,7 +19,9 @@ import { api } from '../constants/api_config';
 
 export default function ResetPassword(props) {
 
+    const [isLoading, setIsLoading] = useState(false)
     const [currentTab, setCurrentTab] = useState(1)
+    const [countryCode, setCountryCode] = useState('216')
     const [phoneNumber, setPhoneNumber] = useState('')
     const [phoneErrorMessage, setPhoneErrorMessage] = useState('')
     const [code, setCode] = useState('')
@@ -32,11 +34,12 @@ export default function ResetPassword(props) {
     const handelSendBtn = (phoneNumber) => {
         var phoneTest = checkPhone(phoneNumber)
         if (phoneTest) {
+            setIsLoading(true)
             //+++++++++++++++++++++++++++++++++++++++++++++++++++++++
             var myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
 
-            var raw = JSON.stringify({ "phonenumber": phoneNumber });
+            var raw = JSON.stringify({ "phonenumber": countryCode + phoneNumber });
 
             var requestOptions = {
                 method: 'POST',
@@ -44,31 +47,36 @@ export default function ResetPassword(props) {
                 body: raw,
                 redirect: 'follow'
             };
-            console.log('fetch started')
             fetch(`${api.url}users/forgotPassword`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
+                setIsLoading(false)
+
                     console.log(result)
-                    if (result.status=='success'){
+                    if (result.status == 'success') {
                         setCurrentTab('2')
                     }
-                    else (setPhoneErrorMessage('phone not existed'))
-                    
-                } )
-                .catch(error => console.log('error', error));
-                console.log('fetch ended')
+                    else (setPhoneErrorMessage('Pas de compte avec ce numéro de téléphone'))
+
+                })
+                .catch(error => {
+                setIsLoading(false)
+
+                    console.log('error', error)
+                });
             //+++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            
+
         }
     }
     const handelValidateBtn = (code) => {
         var codeTest = checkCode(code)
         if (codeTest) {
+            setIsLoading(true)
             //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             var myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
 
-            var raw = JSON.stringify({ "phonenumber": phoneNumber, "code": code });
+            var raw = JSON.stringify({ "phonenumber": countryCode + phoneNumber, "code": code });
 
             var requestOptions = {
                 method: 'POST',
@@ -80,48 +88,57 @@ export default function ResetPassword(props) {
             fetch(`${api.url}users/codeVerification`, requestOptions)
                 .then(response => response.json())
                 .then(result => {
+                    setIsLoading(false)
                     console.log(result)
-                    if (result.message=="votre compte est confirme!"){
+                    if (result.message == "votre compte est confirme!") {
                         setCurrentTab('3')
                     }
                     else {
                         setCodeErrorMessage('invalid code')
                     }
                 })
-                .catch(error => console.log('error', error));
+                .catch(error => {
+                    setIsLoading(false)
+                    console.log('error', error)
+                });
             //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            
+
         }
     }
     const handelOkBtn = (password, repassword) => {
         var passwordTest = checkPassword(password)
         var repasswordTest = checkRepassword(repassword)
         if (passwordTest && repasswordTest) {
+            setIsLoading(true)
             //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             var myHeaders = new Headers();
-myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("Content-Type", "application/json");
 
-var raw = JSON.stringify({"phonenumber":phoneNumber,"password":password,"passwordConfirm":repassword});
+            var raw = JSON.stringify({ "phonenumber": countryCode + phoneNumber, "password": password, "passwordConfirm": repassword });
 
-var requestOptions = {
-  method: 'PATCH',
-  headers: myHeaders,
-  body: raw,
-  redirect: 'follow'
-};
+            var requestOptions = {
+                method: 'PATCH',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
 
-fetch(`${api.url}users/resetPassword`, requestOptions)
-  .then(response => response.json())
-  .then(result => {
-    console.log(result)
-    if (result.status == 'success'){
-        setCurrentTab(4)
-    } else {setRepasswordErrorMessage('Please try again later')}
-   
-  })
-  .catch(error => console.log('error', error));
+            fetch(`${api.url}users/resetPassword`, requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    setIsLoading(false)
+                    console.log(result)
+                    if (result.status == 'success') {
+                        setCurrentTab(4)
+                    } else { setRepasswordErrorMessage('Please try again later') }
+
+                })
+                .catch(error => {
+                    setIsLoading(false)
+                    console.log('error', error)
+                });
             //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            
+
         }
     }
     const handelGoBtn = () => {
@@ -139,6 +156,10 @@ fetch(`${api.url}users/resetPassword`, requestOptions)
         }
         else if (phoneNumber.length < 8) {
             setPhoneErrorMessage('8 digits minimum')
+            return false
+        }
+        else if (countryCode == '') {
+            setPhoneErrorMessage('Select country code')
             return false
         }
         else {
@@ -200,7 +221,7 @@ fetch(`${api.url}users/resetPassword`, requestOptions)
             { currentTab == 1 &&
                 <View style={styles.container}>
                     <Text style={styles.text}>
-                        Write your number here to recieve a validation code
+                        Écrivez votre numéro ici pour recevoir un code de validation
                         </Text>
                     <Input
                         keyboardType='numeric'
@@ -210,11 +231,14 @@ fetch(`${api.url}users/resetPassword`, requestOptions)
                         onChangeText={setPhoneNumber}
                         style={{ marginTop: scale(10) }}
                         errorMessage={phoneErrorMessage}
+                        countryCode={countryCode}
+                        setCountryCode={setCountryCode}
                     />
                     <MainButton
+                        isLoading={isLoading}
                         glowColor={Colors.logoGreen}
                         onPress={() => handelSendBtn(phoneNumber)}
-                        title="Send Code"
+                        title="OK"
                         style={{ marginTop: scale(10) }}
                     />
                 </View>
@@ -222,26 +246,27 @@ fetch(`${api.url}users/resetPassword`, requestOptions)
             { currentTab == 2 &&
                 <View style={styles.container}>
                     <Text style={styles.text}>
-                        We sent you a validation code to {phoneNumber}
+                        Nous vous avons envoyé un code de validation via le numéro {phoneNumber}
                     </Text>
                     <Input
-                        placeholder='Write code here'
+                        placeholder='Écrivez le code ici'
                         name='lock'
                         value={code}
                         onChangeText={setCode}
                         errorMessage={codeErrorMessage}
                         styleText />
                     <MainButton
+                        isLoading={isLoading}
                         glowColor={Colors.logoGreen}
                         onPress={() => handelValidateBtn(code)}
-                        title="Reset My Password"
+                        title="Réinitialiser mot de passe"
                         style={{ marginTop: scale(10) }} />
                 </View>
             }
             { currentTab == 3 &&
                 <View style={styles.container}>
                     <Text style={styles.text}>
-                        Enter a new Password for your account
+                        Entrez un nouveau mot de passe pour votre compte
                 </Text>
                     <Input
                         secureTextEntry={true}
@@ -262,6 +287,7 @@ fetch(`${api.url}users/resetPassword`, requestOptions)
                         errorMessage={repasswordErrorMessage}
                     />
                     <MainButton
+                        isLoading={isLoading}
                         glowColor={Colors.logoGreen}
                         onPress={() => handelOkBtn(password, repassword)}
                         title="OK"
@@ -279,11 +305,12 @@ fetch(`${api.url}users/resetPassword`, requestOptions)
 
                         marginTop: scale(20),
                     }}>
-                        Your password is updated successfully, login now with your new password</Text>
+                        Votre mot de passe a été mis à jour avec succès, connectez-vous maintenant avec votre nouveau mot de passe</Text>
                     <MainButton
+                        isLoading={isLoading}
                         glowColor={Colors.logoGreen}
                         onPress={() => handelGoBtn()}
-                        title="Go to Login"
+                        title="Connexion"
                         style={{ marginTop: scale(40) }} />
                 </View>}
 

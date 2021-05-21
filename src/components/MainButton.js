@@ -9,8 +9,11 @@ export default function Input(props) {
   return (
 
     <View style={[styles.container, props.style]}>
-      <TouchableOpacity style={[styles.button,{borderColor: props.glowColor}]}
-        onPress={props.onPress} >
+      <TouchableOpacity
+      disabled={props.isLoading}
+        style={[styles.button,{borderColor: props.glowColor}]}
+        onPress={props.onPress} 
+        >
 
         {props.isLoading ? (
           <ActivityIndicator size="large" color="white" />
