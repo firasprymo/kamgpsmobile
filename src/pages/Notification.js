@@ -3,13 +3,10 @@ import { Dimensions, Image, ScrollView, Text, RefreshControl, TouchableOpacity, 
 import { scale } from 'react-native-size-matters';
 import { Colors } from '../constants/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import { Images } from '../constants/Images';
-import SentLocationRequest from '../components/SentLocationRequest';
+  import SentLocationRequest from '../components/SentLocationRequest';
 import SentFriendRequest from '../components/SentFriendRequest';
 import RecievedLocationRequest from '../components/RecievedLocationRequest';
 import RecievedFriendRequest from '../components/RecievedFriendRequest';
-import FontAwesome from 'react-native-vector-icons/FontAwesome'
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { api } from '../constants/api_config';
 import { useAppContext } from '../context/AppContext';
 import moment from 'moment';

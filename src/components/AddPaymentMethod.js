@@ -4,6 +4,15 @@ import { Image, StyleSheet, Dimensions, View, TouchableOpacity, Modal, TextInput
 import { scale } from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather'
 import { Colors } from '../constants/Colors';
+import { CreditCardInput, LiteCreditCardInput } from "react-native-credit-card-input";
+
+// <CreditCardInput onChange={this._onChange} />
+// or
+//<LiteCreditCardInput onChange={this._onChange} />
+
+// Note: You'll need to enable LayoutAnimation on android to see LiteCreditCardInput's animations
+// UIManager.setLayoutAnimationEnabledExperimental(true);
+
 
 
 
@@ -29,7 +38,7 @@ export default function AddPaymentMethod(props) {
             <Feather name='x' size={25} color={Colors.grey2} />
           </TouchableOpacity>
         </View>
-        <View style={{
+        {/* <View style={{
           alignSelf: 'center',
           width: scale(300),
           height: scale(45),
@@ -59,8 +68,8 @@ export default function AddPaymentMethod(props) {
           backgroundColor: Colors.grey3
         }}>
           <TextInput placeholder='CVV' style={{ flex: 1, fontSize: scale(12), backgroundColor: null }} />
-        </View>
-        <View style={{
+        </View> */}
+        {/* <View style={{
           alignSelf: 'center',
           width: scale(300),
           height: scale(45),
@@ -81,7 +90,15 @@ export default function AddPaymentMethod(props) {
           backgroundColor: Colors.grey3
         }}>
           <TextInput placeholder='Prénom' style={{ flex: 1, fontSize: scale(12), backgroundColor: null }} />
-        </View>
+        </View> */}
+        <CreditCardInput
+        allowScroll
+        cardScale={0.8}
+        labels={{ number: "Numéro de carte", expiry: "Expiration", cvc: "CVC/CCV" }}
+        labelStyle={{
+          marginVertical: scale(5),
+        }}
+         />
         <View style={{flexDirection:'row', justifyContent: 'space-between',marginTop: scale(20)}}>
         <Text style={{color: Colors.grey1, fontSize: scale(12)}}>Vous pouvez retirer votre</Text>
         <Switch
